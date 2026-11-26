@@ -1,0 +1,12 @@
+{
+  "name": "pixrig",
+  "displayName": "PixRig (working title)",
+  "description": "2D skeleton rigging for Aseprite: bones, mirror mode, rig stored inside the sprite.",
+  "version": "0.3.1",
+  "author": { "name": "TODO" },
+  "contributes": {
+    "scripts": [
+      { "path": "./main.lua" }
+    ]
+  }
+}
