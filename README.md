@@ -1,53 +1,140 @@
-# PixRig — паспорт проекта (для передачи в другой чат)
+# PixRig
 
-**Что это.** Расширение для Aseprite (Lua): 2D-скелет (кости) → «кожа» (силуэт из капсул) → экспорт слоями и кадрами в спрайт. Рабочее название «PixRig».
+**English** | [Русский](README.ru.md)
 
-**Конечная цель.** Импорт 3D-анимации (GLB/glTF/BVH, риг Mixamo) → ретаргет на 2D-скелет → пиксельная анимация. Отложенная фишка: «умные кости» как в Moho (художник рисует крайние позы, угол кости ведёт деформацию пикселей).
+A 2D skeletal animation extension for [Aseprite](https://www.aseprite.org/), written in Lua.
 
-## Статус (версия 0.3.0)
-| Этап | Что | Статус |
-|---|---|---|
-| 1 | Холст с костями: Create/Edit/Link/Delete, зеркало, Undo/Redo, хранение в `sprite.data` | работает (проверено) |
-| 2 | Радиусы суставов, кожа, группы с цветом, контур, экспорт слоями (группа `PixRig`) | работает (проверено) |
-| 3 | Анимация: инструменты Pose/Move, ключи, интерполяция linear/step, окно Timeline, Play, Copy/Paste pose, экспорт всех кадров + тег + длительность | **написано, не проверено в Aseprite** |
-| 4 | IK (две кости, полюс), привязка стоп | план |
-| 5 | Импорт GLB/BVH + ретаргет Mixamo (порядок слоёв при развороте, отметка кадров) | план |
-| 6 | Onion skin, библиотеки ригов/поз, шаблоны скелетов, «выпуклости» (радиус вдоль кости), порядок групп | план |
+PixRig lets you build a 2D skeleton, generate a capsule-based skin silhouette, and export poses or animations into an Aseprite sprite as separate layers.
 
-## Среда пользователя и ограничения
-- Aseprite **1.3-rc4-dev** на рабочем компе (там всё проверялось), более новая версия — дома. Windows. Общение по-русски; присылает скриншоты.
-- У ассистента **нет Aseprite и нет интерпретатора Lua**: код не запускался, только тесты логики пользователем (`lua tests/test_rig.lua`, нужен Lua 5.3/5.4). Каждую правку проверяет пользователь.
+> **Early development — v0.3.0**
+>
+> Skeleton editing, skin generation, and single-pose layer export have been tested in Aseprite. Animation editing and animation export are implemented but **not yet verified in Aseprite**. IK and 3D animation import are planned.
 
-## Структура репозитория
-- `pixrig/rig.lua` — модель (кости, радиусы, группы, зеркало, анимации, FK-поза). Чистый Lua, без API Aseprite.
-- `pixrig/skin.lua` — растеризация кожи (капсулы с радиусами, контур). Чистый Lua.
-- `pixrig/export.lua` — запись в спрайт: `export` (одна поза), `exportAnimation` (все кадры).
-- `pixrig/ui.lua` — два диалога: основной (холст, инструменты, Rig/Skin) и «PixRig Timeline».
-- `pixrig/store.lua`, `json.lua`, `view.lua` — сохранение в `sprite.data` (ключ `pixrig`, JSON), мини-JSON, зум/пан.
-- `entry.lua` — регистрация команды File > PixRig... (с показом полной ошибки через `app.alert`).
-- `build.py` — склеивает всё в один `dist/main.lua` и пакует `.aseprite-extension`. **Только бандл** (см. ниже).
-- `tests/test_rig.lua` — тесты логики. `PROJECT.md` — этот файл.
+## Goals
 
-Сборка: `python3 build.py` → `dist/pixrig-<версия>.aseprite-extension`. Установка: Preferences > Extensions > Add Extension (старую версию сначала Uninstall там же), затем перезапуск. Файл `.aseprite-extension` и распакованные исходники **не** класть в папку `extensions`.
+The current focus is a practical 2D rigging and pixel-animation workflow inside Aseprite.
 
-## Модель данных (в `sprite.data`)
-- Кость: `id, name, parent(0=корень), connected, ax,ay (голова), bx,by (хвост), ra,rb (радиусы), group(0=вспомогательная), mirrorOf`. Координаты в пикселях спрайта, центры пикселей n+0.5.
-- Группы кожи: `{id,name,color}`; активная группа получает новые кости. Контур: `none|pixel` + цвет.
-- Анимации: `{id,name,frames,fps,interp,keys}`, `keys["<boneId>"]["<frame>"] = {rot (градусы вокруг головы), dx, dy (только корень)}`. Ключи JSON-объектов — строки. Поза = FK от rest-позы (кость вращается вокруг своей rest-головы, затем несёт её родитель).
-- `rig.rev` растёт при любой правке (кэш превью кожи).
+The longer-term goal is to import 3D animation from **GLB/glTF or BVH**, retarget a **Mixamo rig** onto a 2D skeleton, and turn the result into pixel animation.
 
-## Что выяснено про Aseprite 1.3-rc4-dev (важно)
-- `require()` не находит модули расширения → всё собирается в один `main.lua`, `require` внутри бандла подменён.
-- `Dialog:tab` отсутствует → есть запасной вариант: секции-разделители.
-- Виджет с параметром `label=` занимает отдельную строку; для компактности подписи делаем отдельными `dlg:label`.
-- Консоль показывает только первую строку ошибки → полный текст через `xpcall` + `app.alert`.
-- Работают: `Dialog:canvas` (мышь, колесо), `GraphicsContext`, `dlg.bounds`, `sprite.data`, `sprite:newGroup/newLayer/newCel`, экспорт слоями.
-- Не проверено: `canvas.onkeydown` (горячие клавиши), `Timer` (Play), `sprite:newEmptyFrame/newTag`, экспорт анимации.
+A deferred feature is **smart bones**, inspired by Moho: the artist draws extreme poses, and bone angles drive pixel deformation.
 
-## Решения
-- Расширение, а не свой редактор и не форк (PhotoCraft/Pixelorama отвергнуты как избыточные).
-- Копируем возможности Bonebase, не код; «киллер-фича» (умные кости) отложена, сначала паритет по функциям.
-- Экспорт перестраивает только группу `PixRig` (слои заблокированы), пользовательские слои не трогаются; нужен RGB-режим.
+## Current status
 
-## Как продолжить в новом чате
-Приложить `pixrig-<версия>-src.zip` и этот файл, описать, что проверено; ассистенту — не заглядывать в код Bonebase, сразу просить пользователя проверить новую версию скриншотами. Следующий шаг: проверить этап 3, затем IK и импорт GLB/BVH.
+| Stage | Feature | Status |
+| --- | --- | --- |
+| 1 | Bone canvas: Create / Edit / Link / Delete, mirroring, Undo / Redo, persistence in `sprite.data` | Working; verified in Aseprite |
+| 2 | Joint radii, skin, color groups, pixel outline, layer export into a `PixRig` group | Working; verified in Aseprite |
+| 3 | Pose / Move tools, keyframes, linear / step interpolation, Timeline dialog, Play, Copy / Paste Pose, all-frame export with an animation tag and frame durations | Implemented; not yet verified in Aseprite |
+| 4 | Two-bone IK with a pole target, foot pinning | Planned |
+| 5 | GLB / BVH import and Mixamo retargeting, including layer ordering on turns and frame annotations | Planned |
+| 6 | Onion skin, rig / pose libraries, skeleton templates, radius variation along bones, skin-group ordering | Planned |
+
+See [PROJECT.md](PROJECT.md) for the technical project notes, data model, and compatibility details.
+
+## Installation
+
+### Requirements and compatibility
+
+- A Windows installation of Aseprite with Lua extension support.
+- The verified development target is **Aseprite 1.3-rc4-dev**. Other builds may behave differently; the animation features still need testing.
+- Use an **RGB sprite** for skin and layer export.
+- Lua and Python are **not required to install a packaged extension**. They are only needed for the optional tests and source build described below.
+
+### Install the packaged extension
+
+1. Obtain `pixrig-<version>.aseprite-extension`, either from the repository's **Releases** page, if a package is provided, or by building it from source as described below.
+2. Close any open PixRig dialogs.
+3. In Aseprite, open **Edit → Preferences → Extensions**.
+4. If an older PixRig version is installed, select it and click **Uninstall** first.
+5. Click **Add Extension**, select the `.aseprite-extension` file, and confirm.
+6. **Restart Aseprite** to finish installation and load the new version.
+7. Open an RGB sprite and launch **File → PixRig...**.
+
+**Important:**
+
+- Select the packaged `.aseprite-extension` file through **Add Extension**. You do not need to extract it or rename it to `.zip`.
+- Do **not** copy the package or the unpacked source files directly into Aseprite's `extensions` folder.
+- Uninstall the previous version before installing the new one, then restart Aseprite.
+
+### Updating
+
+Repeat the installation steps: uninstall the existing PixRig entry under **Preferences → Extensions**, add the new package, and restart Aseprite.
+
+### Uninstalling
+
+Open **Edit → Preferences → Extensions**, select PixRig, click **Uninstall**, and restart Aseprite.
+
+Removing the extension does not remove layers or cels that have already been exported into a sprite.
+
+## Build from source
+
+Run these commands from the repository root:
+
+```sh
+python3 build.py
+```
+
+If your Windows Python installation uses the Python launcher instead:
+
+```powershell
+py -3 build.py
+```
+
+The build script combines the Lua modules into `dist/main.lua` and creates:
+
+```text
+dist/pixrig-<version>.aseprite-extension
+```
+
+Install that package using the steps above. The build script is a **bundler only**: it does not install the extension into Aseprite or validate its runtime behavior.
+
+## Run the logic tests
+
+The pure Lua model tests require **Lua 5.3 or 5.4** available as `lua` on your PATH.
+
+From the repository root:
+
+```sh
+lua tests/test_rig.lua
+```
+
+These tests cover logic outside the Aseprite API. Passing them does **not** verify dialogs, canvas input, timers, sprite modifications, or animation export. Those features must be checked manually in Aseprite.
+
+## Project structure
+
+```text
+pixrig/
+  rig.lua       Skeleton model, radii, groups, mirroring, animation, FK poses
+  skin.lua      Skin rasterization: capsules, joint radii, outline
+  export.lua    Sprite output: single pose and full animation
+  ui.lua        Main dialog and PixRig Timeline dialog
+  store.lua     Persistence in sprite.data
+  json.lua      Minimal JSON implementation
+  view.lua      Canvas zoom and pan
+entry.lua       File > PixRig... command and full error reporting
+build.py        Single-file bundler and extension packager
+tests/
+  test_rig.lua  Pure Lua logic tests
+PROJECT.md      Technical project notes in English
+PROJECT.ru.md   Technical project notes in Russian
+```
+
+The model, skin rasterization, JSON, storage, and view modules are kept separate from direct Aseprite rendering and export operations. `rig.lua` and `skin.lua` are pure Lua and do not use the Aseprite API.
+
+## How it works
+
+- Bones and rig settings are stored as JSON in the sprite's `sprite.data`, under the `pixrig` key.
+- The skin is generated from capsules with configurable joint radii.
+- Skin groups have their own colors and become separate exported layers.
+- Poses use forward kinematics relative to the rest pose.
+- Export rebuilds only the dedicated **PixRig** layer group. Other user layers are not modified; layers inside the generated group are locked.
+
+## Documentation
+
+- [Technical project notes](PROJECT.md)
+- [Технический паспорт проекта](PROJECT.ru.md)
+- [README на русском](README.ru.md)
+
+## Development approach
+
+PixRig is an Aseprite extension rather than a standalone editor or an Aseprite fork. Bonebase is a reference for desired capabilities, not a source of code to copy. The initial goal is feature parity; smart-bone deformation comes later.
