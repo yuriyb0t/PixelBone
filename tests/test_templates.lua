@@ -1,0 +1,15 @@
+package.path="./?.lua;"..package.path
+local Rig=require("pixrig.rig")
+local T=require("pixrig.templates")
+local rig=Rig.new(32)
+rig.mirror.enabled=true
+local ok,n=T.humanoid(rig,64,64)
+assert(ok and n==16,"expected 16 humanoid bones")
+assert(rig:get(1).name=="hips")
+assert(rig:currentAnim().frames==8,"animation schema changed")
+assert(rig:get(5).mirrorOf>0,"left and right arms not paired")
+assert(T.humanoid(rig,64,64)==false,"template overwrote existing skeleton")
+local restored=Rig.fromTable(rig:toTable())
+assert(#restored.bones==16,"serialization broke")
+assert(restored:get(5).mirrorOf>0,"mirroring lost during serialization")
+print("template tests passed")

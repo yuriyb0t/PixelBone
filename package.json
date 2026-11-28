@@ -1,0 +1,16 @@
+{
+  "name": "pixelbone",
+  "displayName": "PixelBone",
+  "description": "PixelBone skeletal animation with Assembly Pose, layered Paint Sheets, IK chain length controls and Bone Inspector in a unified workspace.",
+  "version": "0.8.2",
+  "author": {
+    "name": "PixelBone contributors"
+  },
+  "contributes": {
+    "scripts": [
+      {
+        "path": "./main.lua"
+      }
+    ]
+  }
+}

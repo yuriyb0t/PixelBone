@@ -1,0 +1,2435 @@
+{
+  "schema": "ai-taskboard/v1",
+  "project": {
+    "id": "pixelbone",
+    "name": "PixelBone",
+    "description": "PixelBone — самостоятельное Lua-расширение Aseprite для 2D-скелетной пиксельной анимации. Актуальный кандидат на установку v0.8.1: Rest → Assemble → Animate, Bone Inspector, Paint Sheets, Auto Bone Binding, многослойный Artwork, FK/IK с chain 1–8 и Timeline в одном окне. В v0.8.1 исправлены nil T на Move/Rotate с IK, цепочка IK выведена в начало Bone, Classic UI удалён. v0.7.0 подтверждена пользователем; v0.8.0 запускалась с выявленными ошибками; v0.8.1 прошла автотесты, но ждёт проверки в Aseprite 1.3-rc4-dev. Bonebase — референс, исходный код самостоятельный."
+  },
+  "tasks": [
+    {
+      "id": "PB-041",
+      "title": "Регрессия Auto Bone Binding после изменения размера Paint Sheet и Rest",
+      "type": "bug",
+      "priority": "high",
+      "status": "proposed",
+      "description": "Потенциальная потеря или перепривязка пикселей после изменения размера Paint Sheet, перемещения костей в Rest или повторного рисования. Баг не воспроизведён пользователем; сначала необходим тест.",
+      "acceptanceCriteria": [
+        "Воспроизвести на копии проекта: изменить размер/пиксели источника и проверить сохранность изображения.",
+        "Проверить привязку к [bone group N] и явную привязку к [bone N] после вращения и сборки.",
+        "Если ошибка подтверждается, добавить регрессионный тест и исправить без перезаписи Paint Sheet."
+      ],
+      "files": [
+        "pixrig/binding.lua",
+        "pixrig/paint.lua",
+        "pixrig/rig.lua",
+        "tests/test_art_layers.lua"
+      ],
+      "labels": [
+        "Bug",
+        "Binding",
+        "Paint"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "pending",
+        "by": "",
+        "at": "",
+        "note": ""
+      },
+      "result": "Риск известен; фактический дефект в Aseprite ещё не подтверждён.",
+      "createdAt": "2026-11-27T07:08:37.371Z",
+      "updatedAt": "2026-11-27T10:00:00.000Z",
+      "history": [
+        {
+          "id": "EV-082-PB-041-12",
+          "at": "2026-11-27T10:00:00.000Z",
+          "actor": "ai",
+          "type": "task/update",
+          "taskId": "PB-041",
+          "summary": "Комментарий ИИ: риск, а не подтверждённый баг. Сначала воспроизвести на копии: изменить размер Paint Sheet и переместить кости в Rest."
+        }
+      ]
+    },
+    {
+      "id": "PB-042",
+      "title": "Bone Inspector: Parent, Children, Connected и смена родителя",
+      "type": "feature",
+      "priority": "high",
+      "status": "review",
+      "description": "В v0.8.0 реализован инспектор выбранной кости: имя/ID, Parent, первые пять Children, Connected/Disconnected, Select Parent, Change Parent, Unparent. Требуется проверить поведение в Aseprite.",
+      "acceptanceCriteria": [
+        "При выборе кости показываются фактические имя и ID родителя либо None (root).",
+        "Children и переключение Selected Parent работают на разветвлённом скелете.",
+        "Change Parent по ID/имени не перемещает исходный рисунок; Connect/Disconnect и Unparent работают ожидаемо.",
+        "Сохранение/загрузка проекта сохраняет структуру связей."
+      ],
+      "files": [
+        "pixrig/ui.lua",
+        "pixrig/rig.lua",
+        "tests/harness_workspace.lua"
+      ],
+      "labels": [
+        "UI",
+        "Rig",
+        "v0.8.0"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "pending",
+        "by": "",
+        "at": "",
+        "note": ""
+      },
+      "result": "Код и mock-тесты готовы; на Aseprite v0.8.0 пока не подтверждено.",
+      "createdAt": "2026-11-27T07:08:37.371Z",
+      "updatedAt": "2026-11-27T07:15:21.603Z",
+      "history": []
+    },
+    {
+      "id": "PB-043",
+      "title": "Live Artwork: редактирование Paint Sheet обновляет все кадры",
+      "type": "feature",
+      "priority": "high",
+      "status": "review",
+      "description": "В v0.8.0 переработаны sprite.events, Refresh artwork и многослойный binding. Изменённые пиксели должны повторно использоваться на всех кадрах без перезаписи ключей.",
+      "acceptanceCriteria": [
+        "В исходном Paint Sheet дорисовать шляпу и проверить её на первом и последнем кадре анимации.",
+        "Проверить изменения кистью, стиранием, перемещением cel и Undo/Redo с открытым PixelBone.",
+        "После изменения Artwork ключевые кадры, Assembly Pose и оригинальные cel остаются неизменными.",
+        "При необходимости кнопка Refresh artwork принудительно синхронизирует предпросмотр."
+      ],
+      "files": [
+        "pixrig/binding.lua",
+        "pixrig/paint.lua",
+        "pixrig/ui.lua",
+        "tests/test_art_layers.lua"
+      ],
+      "labels": [
+        "Paint",
+        "Binding",
+        "Animation",
+        "v0.8.0"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "pending",
+        "by": "",
+        "at": "",
+        "note": ""
+      },
+      "result": "Модульные и mock-тесты проходят; реальное live-обновление в Aseprite ещё не проверено.",
+      "createdAt": "2026-11-27T07:08:37.371Z",
+      "updatedAt": "2026-11-27T07:15:21.603Z",
+      "history": []
+    },
+    {
+      "id": "PB-044",
+      "title": "Повторно проверить экспорт анимации в Aseprite после v0.8.0",
+      "type": "task",
+      "priority": "high",
+      "status": "review",
+      "description": "Экспорт v0.3.1 подтверждался пользователем. Алгоритм export.lua в v0.8.0 не переписан, но нужен повторный реальный тест с Assembly Pose и несколькими слоями Artwork.",
+      "acceptanceCriteria": [
+        "Экспортировать анимацию с FK, Move и Assembly Pose, проверить каждый кадр и его длительность.",
+        "Повторить экспорт: заменяется только служебная группа PixRig, исходные Paint Sheets не повреждаются.",
+        "Проверить слой аксессуара [bone N], прозрачность и порядок слоёв.",
+        "Проверить Undo/Redo в Aseprite после экспорта."
+      ],
+      "files": [
+        "pixrig/export.lua",
+        "pixrig/binding.lua",
+        "pixrig/rig.lua"
+      ],
+      "labels": [
+        "Export",
+        "Regression",
+        "v0.8.0"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "pending",
+        "by": "",
+        "at": "",
+        "note": ""
+      },
+      "result": "Ранее проверено в v0.3.1; для v0.8.0 ожидается ручная проверка.",
+      "createdAt": "2026-11-27T07:08:37.372Z",
+      "updatedAt": "2026-11-27T07:15:21.603Z",
+      "history": []
+    },
+    {
+      "id": "PB-045",
+      "title": "Двухпанельный UI v0.7.0: одно окно Canvas + Timeline",
+      "type": "feature",
+      "priority": "medium",
+      "status": "done",
+      "description": "В v0.7.0 создано компактное рабочее окно: вкладки Rig/Bone/Groups/Paint/Animation/Poses/More слева, Canvas сверху и Timeline снизу справа. Пользователь установил v0.7.0 и сообщил, что всё хорошо работает.",
+      "acceptanceCriteria": [
+        "Вкладки меняют содержимое только левой панели.",
+        "Canvas и Timeline остаются видимыми одновременно и не открывают отдельное окно.",
+        "Текущие операции с костями и кадрами сохранены."
+      ],
+      "files": [
+        "pixrig/ui.lua",
+        "pixrig/ui_classic.lua"
+      ],
+      "labels": [
+        "UI",
+        "Milestone",
+        "v0.7.0"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "pending",
+        "by": "",
+        "at": "",
+        "note": ""
+      },
+      "result": "Подтверждено пользователем в Aseprite для v0.7.0; v0.8.0 проверяется отдельно.",
+      "createdAt": "2026-11-27T07:08:37.372Z",
+      "updatedAt": "2026-11-27T07:15:21.603Z",
+      "history": []
+    },
+    {
+      "id": "PB-046",
+      "title": "Не переписывать весь движок ради UI",
+      "type": "research",
+      "priority": "low",
+      "status": "rejected",
+      "description": "Отклонённая идея полной замены рендера/анимационного движка. Принцип проекта: самостоятельный код, точечные изменения, сохранение совместимости и рабочих модулей.",
+      "acceptanceCriteria": [],
+      "files": [],
+      "labels": [
+        "Architecture",
+        "Rejected"
+      ],
+      "createdBy": "human",
+      "decision": {
+        "state": "rejected",
+        "by": "human",
+        "note": "Не менять движок без необходимости.",
+        "at": ""
+      },
+      "result": "Отклонено пользователем; актуальное архитектурное ограничение.",
+      "createdAt": "2026-11-27T07:08:37.372Z",
+      "updatedAt": "2026-11-27T07:15:21.603Z",
+      "history": []
+    },
+    {
+      "id": "PB-047",
+      "title": "Базовый риг: создание костей и капсул (v0.3.1)",
+      "type": "feature",
+      "priority": "medium",
+      "status": "done",
+      "description": "Историческая рабочая основа: создание/редактирование костей, радиусов суставов, капсул и исходной Rest-позы.",
+      "acceptanceCriteria": [
+        "Создать кости и сгенерировать капсулы на спрайте.",
+        "Проверить, что сохранение/повторное открытие не теряет риг."
+      ],
+      "files": [
+        "pixrig/rig.lua",
+        "pixrig/skin.lua",
+        "pixrig/store.lua"
+      ],
+      "labels": [
+        "Rig",
+        "Skin",
+        "Milestone"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "pending",
+        "by": "",
+        "at": "",
+        "note": ""
+      },
+      "result": "Работа капсул подтверждена пользователем в Aseprite v0.3.1.",
+      "createdAt": "2026-11-27T07:15:21.603Z",
+      "updatedAt": "2026-11-27T07:15:21.603Z",
+      "history": []
+    },
+    {
+      "id": "PB-048",
+      "title": "Базовая FK-анимация, Timeline и экспорт по слоям (v0.3.1)",
+      "type": "feature",
+      "priority": "medium",
+      "status": "done",
+      "description": "Историческая рабочая основа: ключевые кадры, вращение/смещение, воспроизведение, интерполяция и экспорт кадров в слои Aseprite.",
+      "acceptanceCriteria": [
+        "Создать несколько FK-ключей и воспроизвести анимацию.",
+        "Экспортировать кадры в слои Aseprite без замены пользовательских исходников."
+      ],
+      "files": [
+        "pixrig/rig.lua",
+        "pixrig/export.lua",
+        "pixrig/ui_classic.lua"
+      ],
+      "labels": [
+        "Animation",
+        "Timeline",
+        "Export",
+        "Milestone"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "pending",
+        "by": "",
+        "at": "",
+        "note": ""
+      },
+      "result": "Экспорт анимации на слои проверен пользователем в v0.3.1; новые режимы проверяются отдельно.",
+      "createdAt": "2026-11-27T07:15:21.603Z",
+      "updatedAt": "2026-11-27T07:15:21.603Z",
+      "history": []
+    },
+    {
+      "id": "PB-049",
+      "title": "Редактируемые Paint Sheets (v0.4.0)",
+      "type": "feature",
+      "priority": "medium",
+      "status": "done",
+      "description": "Генерация Paint Sheet из костей/капсул и редактирование исходных пикселей в стандартном редакторе Aseprite.",
+      "acceptanceCriteria": [
+        "Сгенерировать Paint Sheet из разнесённых деталей.",
+        "Открыть лист в Aseprite и нарисовать поверх капсул.",
+        "Исходные рисунки сохраняются при экспорте."
+      ],
+      "files": [
+        "pixrig/paint.lua",
+        "pixrig/binding.lua"
+      ],
+      "labels": [
+        "Paint",
+        "Milestone"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "pending",
+        "by": "",
+        "at": "",
+        "note": ""
+      },
+      "result": "Пользователь подтвердил работоспособность Paint Sheets в Aseprite v0.4.0.",
+      "createdAt": "2026-11-27T07:15:21.603Z",
+      "updatedAt": "2026-11-27T07:15:21.603Z",
+      "history": []
+    },
+    {
+      "id": "PB-050",
+      "title": "Auto Bone Binding: базовая привязка рисованных пикселей",
+      "type": "feature",
+      "priority": "high",
+      "status": "review",
+      "description": "В исходном v0.6.0 уже есть привязка пикселей к ближайшим костям группы; в v0.8.0 механизм расширен. Нужно подтвердить качество поворотов и перерисовки в реальном Aseprite.",
+      "acceptanceCriteria": [
+        "Проверить жёсткое следование окрашенной детали выбранной кости при вращении.",
+        "Проверить границы между близкими костями и сохранение пикселей.",
+        "Зафиксировать тест для пикселей за пределами капсулы."
+      ],
+      "files": [
+        "pixrig/binding.lua",
+        "pixrig/skin.lua",
+        "tests/test_art_layers.lua"
+      ],
+      "labels": [
+        "Binding",
+        "Paint",
+        "Regression"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "pending",
+        "by": "",
+        "at": "",
+        "note": ""
+      },
+      "result": "Базовая функциональность реализована; автоматические тесты пройдены, полный пользовательский сценарий требует проверки.",
+      "createdAt": "2026-11-27T07:15:21.603Z",
+      "updatedAt": "2026-11-27T07:15:21.603Z",
+      "history": []
+    },
+    {
+      "id": "PB-051",
+      "title": "Группы костей, Mirror и Humanoid template",
+      "type": "feature",
+      "priority": "medium",
+      "status": "review",
+      "description": "Существующие инструменты Rig/Groups и шаблон Humanoid сохранены при переработке интерфейса. Рекомендуется повторно проверить зеркальные кости и управление группами на актуальном UI.",
+      "acceptanceCriteria": [
+        "Создать симметричный Humanoid и проверить Mirror.",
+        "Переключить группы и убедиться в правильной принадлежности новых костей.",
+        "Проверить сохранение групп и работу после экспорта."
+      ],
+      "files": [
+        "pixrig/rig.lua",
+        "pixrig/templates.lua",
+        "pixrig/ui.lua",
+        "tests/test_templates.lua"
+      ],
+      "labels": [
+        "Rig",
+        "Groups",
+        "Templates"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "pending",
+        "by": "",
+        "at": "",
+        "note": ""
+      },
+      "result": "Шаблон и модель проходят автоматические тесты; ручная проверка нового UI ожидается.",
+      "createdAt": "2026-11-27T07:15:21.603Z",
+      "updatedAt": "2026-11-27T07:15:21.603Z",
+      "history": []
+    },
+    {
+      "id": "PB-052",
+      "title": "IK-контроллеры и цепи 1–8 костей (v0.6.0)",
+      "type": "feature",
+      "priority": "high",
+      "status": "review",
+      "description": "IK-контроллеры и цепи 1–8 костей сохранены. В v0.8.1 исправлены падения UI при Move/Rotate под активным IK и выведена длина цепочки в верхнюю часть Bone. Нужно проверить поведение на реальной Aseprite и совместимость IK с Assembly.",
+      "acceptanceCriteria": [
+        "Создать и удалить IK controller для соединённой руки и ноги.",
+        "Проверить цепь длиной 1, 2 и 3+ костей и сторону сгиба.",
+        "Убедиться, что IK экспортируется и не повреждает FK-ключи.",
+        "На установленной v0.8.1 проверить Chain -/+ для 1/2/3 костей, влияния (%) и отключённого IK.",
+        "Убедиться, что Move/Rotate на IK-кости больше не вызывают nil T (см. USR-8YRP1LQD и USR-SR6WL6AH)."
+      ],
+      "files": [
+        "pixrig/rig.lua",
+        "pixrig/ui.lua",
+        "tests/test_rig.lua"
+      ],
+      "labels": [
+        "IK",
+        "Rig",
+        "Regression"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "pending",
+        "by": "",
+        "at": "",
+        "note": ""
+      },
+      "result": "v0.8.2 hotfix: контроллер создаётся в текущей позе; цепочка останавливается перед точкой ветвления и сообщает причину; UI показывает requested/used. Нужна проверка в Aseprite.",
+      "createdAt": "2026-11-27T07:15:21.603Z",
+      "updatedAt": "2026-11-28T07:53:18Z",
+      "history": [
+        {
+          "id": "EV-081-PB-052-1",
+          "at": "2026-11-27T07:35:37.044Z",
+          "actor": "ai",
+          "type": "task/update",
+          "taskId": "PB-052",
+          "summary": "Усилено покрытие IK, добавлены visible chain и регрессии Move/Rotate."
+        },
+        {
+          "id": "EV-082-PB-052-13",
+          "at": "2026-11-27T10:00:00.000Z",
+          "actor": "ai",
+          "type": "task/update",
+          "taskId": "PB-052",
+          "summary": "Комментарий ИИ: Move/Rotate под IK и Chain подтверждены пользователем в v0.8.1. Остаётся проверить сохранение, несколько кадров и экспорт с IK."
+        },
+        {
+          "id": "EV-082-PB-052-3",
+          "at": "2026-11-28T07:53:18Z",
+          "actor": "ai",
+          "type": "task/update",
+          "taskId": "PB-052",
+          "summary": "Разобрано: IK-цепочка считается от кончика и молча обрывается на разъединённой кости или точке ветвления (таз/грудь), поэтому chain=3 на двухзвенной ноге не гнул бедро/тянул тело. addController теперь ставит контроллер в текущую позу (Animate) или Assembly, а не в rest, и не дёргает стопу. UI показывает 'requested/used' и причину обрыва; сообщение IK-инструмента подсказывает использовать Move для тела. Тесты: добавлены два кейса, все тесты проходят."
+        }
+      ]
+    },
+    {
+      "id": "PB-053",
+      "title": "Classic UI как резервный режим для старых проектов",
+      "type": "feature",
+      "priority": "medium",
+      "status": "rejected",
+      "description": "Классический интерфейс v0.6 оставлен рядом с новым рабочим пространством для сравнения и диагностики. В Classic нет отдельного редактора Assembly Pose.",
+      "acceptanceCriteria": [
+        "Classic UI открывается из расширения и позволяет посмотреть старые проекты.",
+        "Не изменяет данные новой Assembly Pose при обычном просмотре.",
+        "Проверить работу с копией реального проекта v0.6.0."
+      ],
+      "files": [
+        "pixrig/ui_classic.lua",
+        "entry.lua",
+        "tests/harness_classic.lua"
+      ],
+      "labels": [
+        "UI",
+        "Compatibility"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "rejected",
+        "by": "human",
+        "at": "2026-11-27T07:25:24.107Z",
+        "note": "Пользователь 27.11.2026 запросил удалить старый интерфейс (USR-TTMQNOGB); Classic больше не поддерживается в v0.8.1."
+      },
+      "result": "Резервный Classic UI отменён решением пользователя; модуль и команда удалены в v0.8.1. Сохранён в задаче только исторический контекст.",
+      "createdAt": "2026-11-27T07:15:21.603Z",
+      "updatedAt": "2026-11-27T07:35:37.044Z",
+      "history": [
+        {
+          "id": "EV-081-PB-053-1",
+          "at": "2026-11-27T07:35:37.044Z",
+          "actor": "ai",
+          "type": "task/update",
+          "taskId": "PB-053",
+          "summary": "Classic UI исключён из нового релиза по явному запросу пользователя."
+        }
+      ]
+    },
+    {
+      "id": "PB-054",
+      "title": "Assembly Pose: Rest → Assemble → Animate (v0.8.0)",
+      "type": "feature",
+      "priority": "high",
+      "status": "review",
+      "description": "Отдельная поза сборки позволяет рисовать детали разнесённо, а затем собрать персонажа без расходования кадра анимации.",
+      "acceptanceCriteria": [
+        "В Rest части остаются разнесёнными; в Assemble перемещаются инструментами Move и Rotate.",
+        "Сборка не создаёт ключевых кадров; Animate начинает собранного персонажа с кадра 1.",
+        "Изменение Assembly применяется ко всем кадрам при сохранении существующих ключей."
+      ],
+      "files": [
+        "pixrig/rig.lua",
+        "pixrig/ui.lua",
+        "tests/test_assembly.lua"
+      ],
+      "labels": [
+        "Assembly",
+        "Animation",
+        "v0.8.0"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "pending",
+        "by": "",
+        "at": "",
+        "note": ""
+      },
+      "result": "Механика реализована; тесты rig/assembly пройдены, тест на реальном Aseprite ожидается.",
+      "createdAt": "2026-11-27T07:15:21.603Z",
+      "updatedAt": "2026-11-27T07:15:21.603Z",
+      "history": []
+    },
+    {
+      "id": "PB-055",
+      "title": "Отдельные кнопки Rotate и Move в верхней панели",
+      "type": "feature",
+      "priority": "medium",
+      "status": "review",
+      "description": "Устранить путаницу между режимом Pose и инструментом вращения: Rotate и Move доступны явно в Assemble и Animate.",
+      "acceptanceCriteria": [
+        "Rotate включает вращение выбранной кости, Move — перемещение.",
+        "В режиме Assemble действия не создают Timeline-ключи.",
+        "В режиме Animate действия создают ожидаемые ключи."
+      ],
+      "files": [
+        "pixrig/ui.lua",
+        "tests/harness_workspace.lua"
+      ],
+      "labels": [
+        "UI",
+        "Animation",
+        "v0.8.0"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "pending",
+        "by": "",
+        "at": "",
+        "note": ""
+      },
+      "result": "Rotate/Move доступны явно; в v0.8.1 исправлены UI-ошибки при активном IK. Тест реальной Aseprite ещё необходим.",
+      "createdAt": "2026-11-27T07:15:21.603Z",
+      "updatedAt": "2026-11-27T10:00:00.000Z",
+      "history": [
+        {
+          "id": "EV-081-PB-055-1",
+          "at": "2026-11-27T07:35:37.044Z",
+          "actor": "ai",
+          "type": "task/update",
+          "taskId": "PB-055",
+          "summary": "v0.8.1: исправлены пути Move/Rotate с IK, работа с Assembly проверена через mock UI."
+        },
+        {
+          "id": "EV-082-PB-055-14",
+          "at": "2026-11-27T10:00:00.000Z",
+          "actor": "ai",
+          "type": "task/update",
+          "taskId": "PB-055",
+          "summary": "Комментарий ИИ: Rotate/Move на IK-костях работают в реальном Aseprite (подтверждено в PB-064)."
+        }
+      ]
+    },
+    {
+      "id": "PB-056",
+      "title": "Новый слой Artwork с явной привязкой [bone N]",
+      "type": "feature",
+      "priority": "high",
+      "status": "review",
+      "description": "Независимые детали вроде шляпы, меча и волос можно рисовать на отдельных слоях, жёстко привязанных к выбранной кости.",
+      "acceptanceCriteria": [
+        "Кнопка New layer for selected bone создаёт слой с тегом [bone N].",
+        "Пиксели слоя следуют нужной кости даже на расстоянии от её капсулы.",
+        "Изменение аксессуара на Paint Sheet не меняет анимационные ключи."
+      ],
+      "files": [
+        "pixrig/paint.lua",
+        "pixrig/binding.lua",
+        "pixrig/ui.lua",
+        "tests/test_art_layers.lua"
+      ],
+      "labels": [
+        "Paint",
+        "Binding",
+        "v0.8.0"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "pending",
+        "by": "",
+        "at": "",
+        "note": ""
+      },
+      "result": "Добавлено в v0.8.0, проходят модульные тесты; ручной сценарий со шляпой ещё не проверен.",
+      "createdAt": "2026-11-27T07:15:21.603Z",
+      "updatedAt": "2026-11-27T07:15:21.603Z",
+      "history": []
+    },
+    {
+      "id": "PB-057",
+      "title": "Многослойный Binding: группы, видимость и прозрачность",
+      "type": "feature",
+      "priority": "medium",
+      "status": "review",
+      "description": "Слой [bone group N] использует Auto Binding, слой [bone N] — точную привязку; вложенные обычные слои наследуют группу. Поддерживаются opacity и visibility.",
+      "acceptanceCriteria": [
+        "Два и более слоя корректно компонуются и следуют нужным костям.",
+        "Видимость и непрозрачность слоёв/cel корректно отражаются в предпросмотре и экспорте.",
+        "Исходные изображения слоёв не перезаписываются."
+      ],
+      "files": [
+        "pixrig/binding.lua",
+        "tests/test_art_layers.lua"
+      ],
+      "labels": [
+        "Binding",
+        "Paint",
+        "v0.8.0"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "pending",
+        "by": "",
+        "at": "",
+        "note": ""
+      },
+      "result": "Автоматический тест многослойного композитинга пройден.",
+      "createdAt": "2026-11-27T07:15:21.603Z",
+      "updatedAt": "2026-11-27T07:15:21.603Z",
+      "history": []
+    },
+    {
+      "id": "PB-058",
+      "title": "Сохранение Assembly без нарушения формата старых проектов",
+      "type": "task",
+      "priority": "high",
+      "status": "review",
+      "description": "Сохранён объект sprite.data.pixrig version=2; добавлено необязательное поле assembly с rot/dx/dy по bone ID. Старые проекты должны открываться с нулевыми смещениями.",
+      "acceptanceCriteria": [
+        "Загрузить данные без assembly и получить прежний Rest/Animate.",
+        "Сохранить и повторно открыть Assembly Pose без потери ключей и IK.",
+        "Undo изменений Assembly не стирает исходные кости и artwork."
+      ],
+      "files": [
+        "pixrig/rig.lua",
+        "pixrig/store.lua",
+        "tests/test_assembly.lua"
+      ],
+      "labels": [
+        "Compatibility",
+        "Assembly",
+        "v0.8.0"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "pending",
+        "by": "",
+        "at": "",
+        "note": ""
+      },
+      "result": "Модульные проверки сохранения/загрузки проходят; миграция реальных файлов Aseprite не проверена.",
+      "createdAt": "2026-11-27T07:15:21.603Z",
+      "updatedAt": "2026-11-27T07:15:21.603Z",
+      "history": []
+    },
+    {
+      "id": "PB-059",
+      "title": "E2E: раздельное рисование → сборка → анимация → правка шляпы",
+      "type": "task",
+      "priority": "high",
+      "status": "todo",
+      "description": "Главный пользовательский сценарий Bonebase-подобного workflow должен работать без пересоздания ключевых кадров и без потери исходных рисунков.",
+      "acceptanceCriteria": [
+        "В Rest нарисовать разнесённые руку/ногу/голову и создать Paint Sheet.",
+        "Собрать персонажа в Assemble и анимировать с кадра 1.",
+        "После нескольких ключей дорисовать отдельную шляпу и изменить цвет одежды.",
+        "Проверить новые пиксели на каждом кадре и после экспорта."
+      ],
+      "files": [
+        "pixrig/ui.lua",
+        "pixrig/rig.lua",
+        "pixrig/binding.lua",
+        "pixrig/export.lua"
+      ],
+      "labels": [
+        "QA",
+        "Assembly",
+        "Paint",
+        "Priority"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "approved",
+        "by": "human",
+        "at": "2026-11-27T09:00:48.813Z",
+        "note": ""
+      },
+      "result": "Сценарий E2E остаётся на ручной проверке; v0.8.1 не меняет движок Assembly, Artwork и экспорт.",
+      "createdAt": "2026-11-27T07:15:21.603Z",
+      "updatedAt": "2026-11-27T10:00:00.000Z",
+      "history": [
+        {
+          "id": "EV-081-PB-059-1",
+          "at": "2026-11-27T07:35:37.044Z",
+          "actor": "ai",
+          "type": "task/update",
+          "taskId": "PB-059",
+          "summary": "E2E сценарий перенесён на v0.8.1 после исправления Move/Rotate + IK."
+        },
+        {
+          "id": "EV-X5BIHDNW",
+          "at": "2026-11-27T09:00:48.812Z",
+          "actor": "human",
+          "type": "task/edit",
+          "taskId": "PB-059",
+          "summary": "Сохранены поля карточки перед решением"
+        },
+        {
+          "id": "EV-NPV7TDNX",
+          "at": "2026-11-27T09:00:48.813Z",
+          "actor": "human",
+          "type": "task/decision",
+          "taskId": "PB-059",
+          "summary": "Решение: approved"
+        },
+        {
+          "id": "EV-082-PB-059-9",
+          "at": "2026-11-27T10:00:00.000Z",
+          "actor": "ai",
+          "type": "task/update",
+          "taskId": "PB-059",
+          "summary": "Комментарий ИИ: остаётся главным ручным сценарием (Paint Sheet → Assemble → Animate → правка шляпы). Рекомендую делать на копии проекта; при ошибке пришлите скриншот и текст из app.alert."
+        }
+      ],
+      "statusEditedBy": "human"
+    },
+    {
+      "id": "PB-060",
+      "title": "Выбирать актуальный Paint Sheet при нескольких поколениях",
+      "type": "feature",
+      "priority": "medium",
+      "status": "review",
+      "description": "Если Paint Sheet был сгенерирован несколько раз, просмотр и Open Paint Sheet должны обращаться к одному последнему актуальному источнику.",
+      "acceptanceCriteria": [
+        "Создать два поколения Paint Sheet и открыть второе через UI.",
+        "Предпросмотр использует те же пиксели, которые открылись в редакторе.",
+        "Старый Paint Sheet не удалён и не смешивается с новым."
+      ],
+      "files": [
+        "pixrig/binding.lua",
+        "pixrig/ui.lua",
+        "tests/test_art_layers.lua"
+      ],
+      "labels": [
+        "Paint",
+        "Regression",
+        "v0.8.0"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "pending",
+        "by": "",
+        "at": "",
+        "note": ""
+      },
+      "result": "Логика выбора обновлена в v0.8.0; ручной тест нескольких поколений ожидается.",
+      "createdAt": "2026-11-27T07:15:21.603Z",
+      "updatedAt": "2026-11-27T07:15:21.603Z",
+      "history": []
+    },
+    {
+      "id": "PB-061",
+      "title": "Иерархия костей: Link, Parent/Child, Connected/Disconnected",
+      "type": "feature",
+      "priority": "medium",
+      "status": "done",
+      "description": "Родитель/ребёнок и режимы соединения уже реализованы. Пользователь отдельно подтвердил, что Connect работает; удобный Inspector вынесен в PB-042.",
+      "acceptanceCriteria": [
+        "Через Link назначается родитель дочерней кости.",
+        "Подтверждена работа соединения кости с родителем.",
+        "Связь сохраняется в модели через bone.parent и connected."
+      ],
+      "files": [
+        "pixrig/rig.lua",
+        "pixrig/ui.lua"
+      ],
+      "labels": [
+        "Rig",
+        "Parenting",
+        "Milestone"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "pending",
+        "by": "",
+        "at": "",
+        "note": ""
+      },
+      "result": "Connect/Link подтверждён пользователем для рабочей версии; интерфейс инспектора v0.8 требует проверки.",
+      "createdAt": "2026-11-27T07:15:21.603Z",
+      "updatedAt": "2026-11-27T07:15:21.603Z",
+      "history": []
+    },
+    {
+      "id": "PB-062",
+      "title": "Реальное sprite.events, Undo/Redo и синхронизация cel",
+      "type": "task",
+      "priority": "high",
+      "status": "todo",
+      "description": "Проверить на Aseprite 1.3-rc4-dev, что события изменения исходного рисунка срабатывают стабильно и не создают рекурсивных обновлений.",
+      "acceptanceCriteria": [
+        "Изменить пиксели Pencil/Eraser с открытым окном PixelBone.",
+        "Проверить Undo/Redo, перенос cel, visibility/opacity и вложенные слои.",
+        "Не допускать потери рисунка и утечки памяти при серии правок."
+      ],
+      "files": [
+        "pixrig/ui.lua",
+        "pixrig/binding.lua",
+        "pixrig/paint.lua"
+      ],
+      "labels": [
+        "QA",
+        "Bug",
+        "LiveArtwork"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "pending",
+        "by": "",
+        "at": "",
+        "note": ""
+      },
+      "result": "Доступно только mock-покрытие; реальное поведение API ещё неизвестно.",
+      "createdAt": "2026-11-27T07:15:21.603Z",
+      "updatedAt": "2026-11-27T10:00:00.000Z",
+      "history": [
+        {
+          "id": "EV-3HJ46NVD",
+          "at": "2026-11-27T09:32:08.280Z",
+          "actor": "human",
+          "type": "task/edit",
+          "taskId": "PB-062",
+          "summary": "Изменена карточка: Реальное sprite.events, Undo/Redo и синхронизация cel"
+        },
+        {
+          "id": "EV-082-PB-062-10",
+          "at": "2026-11-27T10:00:00.000Z",
+          "actor": "ai",
+          "type": "task/update",
+          "taskId": "PB-062",
+          "summary": "Комментарий ИИ: sprite.events и Undo/Redo проверены только на mock. Реальное поведение rc4-dev неизвестно — самый рискованный пункт для Live Artwork (PB-043). Проверять вместе с PB-043."
+        }
+      ],
+      "statusEditedBy": "human"
+    },
+    {
+      "id": "PB-063",
+      "title": "IK с разнесёнными костями и Assembly Pose",
+      "type": "research",
+      "priority": "high",
+      "status": "proposed",
+      "description": "Текущее IK предполагает Connected-цепь в Rest. Для разнесённого Paint Sheet и Disconnected-костей требуется исследовать корректное IK без разрушения исходного рисования.",
+      "acceptanceCriteria": [
+        "Воспроизвести работу IK для двух разнесённых и двух соединённых цепей.",
+        "Разработать безопасную модель joint offsets без перемещения Paint Sheet.",
+        "Не нарушить обычный IK, сохранение и экспорт."
+      ],
+      "files": [
+        "pixrig/rig.lua",
+        "pixrig/ui.lua",
+        "tests/test_assembly.lua"
+      ],
+      "labels": [
+        "IK",
+        "Assembly",
+        "Research"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "pending",
+        "by": "",
+        "at": "",
+        "note": ""
+      },
+      "result": "Уточнение: обрыв цепочки на disconnected/branch теперь явно сообщается, а не молча укорачивает IK.",
+      "createdAt": "2026-11-27T07:15:21.603Z",
+      "updatedAt": "2026-11-28T07:53:18Z",
+      "history": [
+        {
+          "id": "EV-082-PB-063-11",
+          "at": "2026-11-27T10:00:00.000Z",
+          "actor": "ai",
+          "type": "task/update",
+          "taskId": "PB-063",
+          "summary": "Комментарий ИИ: архитектурное ограничение, без воспроизведённого бага. Берём, когда понадобится IK на разнесённых Disconnected-частях."
+        },
+        {
+          "id": "EV-082-PB-063-2",
+          "at": "2026-11-28T07:53:18Z",
+          "actor": "ai",
+          "type": "task/update",
+          "taskId": "PB-063",
+          "summary": "Разобрано: IK-цепочка считается от кончика и молча обрывается на разъединённой кости или точке ветвления (таз/грудь), поэтому chain=3 на двухзвенной ноге не гнул бедро/тянул тело. addController теперь ставит контроллер в текущую позу (Animate) или Assembly, а не в rest, и не дёргает стопу. UI показывает 'requested/used' и причину обрыва; сообщение IK-инструмента подсказывает использовать Move для тела. Тесты: добавлены два кейса, все тесты проходят."
+        }
+      ]
+    },
+    {
+      "id": "PB-064",
+      "title": "Ручная регрессия PixelBone v0.8.1 в Aseprite 1.3-rc4-dev",
+      "type": "task",
+      "priority": "high",
+      "status": "done",
+      "description": "v0.8.0 реально запускалась пользователем в Aseprite; получены ошибки Move/Rotate на IK-кости (nil T) и замечание о скрытой длине IK-цепочки. В v0.8.1 они исправлены и прошли автоматические тесты, но запуск новой сборки в Aseprite пока не подтверждён.",
+      "acceptanceCriteria": [
+        "Расширение устанавливается и открывает одно окно без падений.",
+        "Canvas, Timeline, семь вкладок, прокрутка и ввод работают.",
+        "Rest/Assemble/Animate и Rotate/Move не конфликтуют с pan/zoom и выделением.",
+        "Проверить разрешения 1366x768 и 1920x1080 по возможности.",
+        "Проверить отсутствие ошибок main.lua:3944 и main.lua:4297 при работе с IK.",
+        "Убедиться, что в списке Scripts больше нет Classic UI, а Chain -/+ доступен в Bone."
+      ],
+      "files": [
+        "entry.lua",
+        "pixrig/ui.lua",
+        "tests/harness_workspace.lua",
+        "tests/harness_sizes.lua"
+      ],
+      "labels": [
+        "QA",
+        "UI",
+        "Compatibility"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "approved",
+        "by": "human",
+        "at": "2026-11-27T09:13:18.851Z",
+        "note": "Ошибки пропали все работает отлично. пока отклоним длину Ик все еще не нашел где задается "
+      },
+      "result": "Подтверждено пользователем в Aseprite: ошибки Move/Rotate на IK пропали, всё работает. Длину IK-цепочки пользователь нашёл (Bone > IK controllers / chain length).",
+      "createdAt": "2026-11-27T07:15:21.603Z",
+      "updatedAt": "2026-11-27T10:00:00.000Z",
+      "history": [
+        {
+          "id": "EV-081-PB-064-1",
+          "at": "2026-11-27T07:35:37.044Z",
+          "actor": "ai",
+          "type": "task/update",
+          "taskId": "PB-064",
+          "summary": "Регрессионный план обновлён с учётом подтверждённого запуска v0.8.0 и выпуска v0.8.1."
+        },
+        {
+          "id": "EV-SUDJGP6I",
+          "at": "2026-11-27T09:12:43.578Z",
+          "actor": "human",
+          "type": "task/edit",
+          "taskId": "PB-064",
+          "summary": "Сохранены поля карточки перед решением"
+        },
+        {
+          "id": "EV-P8TA0P6J",
+          "at": "2026-11-27T09:12:43.579Z",
+          "actor": "human",
+          "type": "task/decision",
+          "taskId": "PB-064",
+          "summary": "Решение: rejected — Ошибки пропали все работает отлично. пока отклоним длину Ик все еще не нашел где задается "
+        },
+        {
+          "id": "EV-28F15QH6",
+          "at": "2026-11-27T09:12:45.258Z",
+          "actor": "human",
+          "type": "task/edit",
+          "taskId": "PB-064",
+          "summary": "Изменена карточка: Ручная регрессия PixelBone v0.8.1 в Aseprite 1.3-rc4-dev"
+        },
+        {
+          "id": "EV-BJS8FGEB",
+          "at": "2026-11-27T09:13:18.851Z",
+          "actor": "human",
+          "type": "task/edit",
+          "taskId": "PB-064",
+          "summary": "Сохранены поля карточки перед решением"
+        },
+        {
+          "id": "EV-85F6BGEB",
+          "at": "2026-11-27T09:13:18.851Z",
+          "actor": "human",
+          "type": "task/decision",
+          "taskId": "PB-064",
+          "summary": "Решение: approved — Ошибки пропали все работает отлично. пока отклоним длину Ик все еще не нашел где задается "
+        },
+        {
+          "id": "EV-6QKMDHMY",
+          "at": "2026-11-27T09:13:20.458Z",
+          "actor": "human",
+          "type": "task/edit",
+          "taskId": "PB-064",
+          "summary": "Изменена карточка: Ручная регрессия PixelBone v0.8.1 в Aseprite 1.3-rc4-dev"
+        },
+        {
+          "id": "EV-082-PB-064-1",
+          "at": "2026-11-27T10:00:00.000Z",
+          "actor": "ai",
+          "type": "task/update",
+          "taskId": "PB-064",
+          "summary": "Закрыто по подтверждению пользователя (v0.8.1 в реальном Aseprite). Оговорка про длину IK снята: найдено в панели Bone."
+        }
+      ],
+      "statusEditedBy": "human"
+    },
+    {
+      "id": "PB-065",
+      "title": "Защитить привязку от изменений геометрии в Rest после покраски",
+      "type": "research",
+      "priority": "medium",
+      "status": "proposed",
+      "description": "Перемещение/изменение кости в Rest может изменить результат ближайшей привязки для [bone group N] и сдвинуть Art. Нужна безопасная стратегия без потери оригинальных пикселей.",
+      "acceptanceCriteria": [
+        "Документировать предупреждение при редактировании Rest после создания Artwork.",
+        "Исследовать фиксированное соответствие пикселей и bone ID либо ручной Rebind.",
+        "Сохранить совместимость старых Paint Sheets."
+      ],
+      "files": [
+        "pixrig/rig.lua",
+        "pixrig/binding.lua",
+        "pixrig/ui.lua"
+      ],
+      "labels": [
+        "Binding",
+        "Rig",
+        "Research"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "pending",
+        "by": "",
+        "at": "",
+        "note": ""
+      },
+      "result": "Ограничение подтверждено архитектурой; не заявлено как воспроизведённый баг.",
+      "createdAt": "2026-11-27T07:15:21.603Z",
+      "updatedAt": "2026-11-27T07:15:21.603Z",
+      "history": []
+    },
+    {
+      "id": "PB-066",
+      "title": "Поддержка анимированных исходных Paint Sheets по кадрам",
+      "type": "feature",
+      "priority": "low",
+      "status": "proposed",
+      "description": "Сейчас для исходного рисунка читается первый кадр Paint Sheet. Поддержка разной графики по кадрам — отдельная будущая функция.",
+      "acceptanceCriteria": [
+        "Определить модель выбора исходного cel для каждого кадра.",
+        "Не нарушить один статичный Paint Sheet, используемый во всей анимации.",
+        "Добавить тест многокадрового источника."
+      ],
+      "files": [
+        "pixrig/binding.lua",
+        "pixrig/paint.lua"
+      ],
+      "labels": [
+        "Paint",
+        "Future"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "pending",
+        "by": "",
+        "at": "",
+        "note": ""
+      },
+      "result": "Не реализовано; текущий контракт — редактирование первого кадра.",
+      "createdAt": "2026-11-27T07:15:21.603Z",
+      "updatedAt": "2026-11-27T07:15:21.603Z",
+      "history": []
+    },
+    {
+      "id": "PB-067",
+      "title": "Сохраняемая библиотека Poses",
+      "type": "feature",
+      "priority": "low",
+      "status": "proposed",
+      "description": "Библиотека поз в v0.7/v0.8 рассчитана на текущий сеанс. План: сохранять позы вместе с проектом без изменения существующих ключей.",
+      "acceptanceCriteria": [
+        "Позу можно сохранить, назвать, вызвать и удалить после повторного открытия проекта.",
+        "Старые файлы без библиотеки поз открываются без миграции."
+      ],
+      "files": [
+        "pixrig/ui.lua",
+        "pixrig/rig.lua",
+        "pixrig/store.lua"
+      ],
+      "labels": [
+        "Poses",
+        "Future"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "pending",
+        "by": "",
+        "at": "",
+        "note": ""
+      },
+      "result": "Сейчас библиотека поз не является постоянной.",
+      "createdAt": "2026-11-27T07:15:21.603Z",
+      "updatedAt": "2026-11-27T07:15:21.603Z",
+      "history": []
+    },
+    {
+      "id": "PB-068",
+      "title": "Перетаскиваемый разделитель панелей и компактный режим UI",
+      "type": "feature",
+      "priority": "medium",
+      "status": "proposed",
+      "description": "В v0.8.0 пропорции панелей фиксированы; на 1366x768 при UI scale 200% часть необязательных кнопок скрыта в More. Улучшение UX возможно при сохранении стабильности Aseprite API.",
+      "acceptanceCriteria": [
+        "Исследовать безопасное изменение ширины панелей внутри Dialog:canvas.",
+        "Не допустить выхода окна за экран или обрезания верхних инструментов.",
+        "Сохранить режим 1366x768 и прокрутку длинных вкладок."
+      ],
+      "files": [
+        "pixrig/ui.lua",
+        "tests/harness_sizes.lua"
+      ],
+      "labels": [
+        "UI",
+        "UX",
+        "Future"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "pending",
+        "by": "",
+        "at": "",
+        "note": ""
+      },
+      "result": "Пока реализован фиксированный адаптивный layout, без пользовательского ресайза.",
+      "createdAt": "2026-11-27T07:15:21.603Z",
+      "updatedAt": "2026-11-27T07:15:21.603Z",
+      "history": []
+    },
+    {
+      "id": "PB-069",
+      "title": "Оценить безопасные горячие клавиши после старого краша v0.3.0",
+      "type": "research",
+      "priority": "low",
+      "status": "proposed",
+      "description": "В ранней версии Aseprite возникал нативный сбой интерфейса; onkeydown был отключён. Возвращать клавиши можно только после проверки совместимости API.",
+      "acceptanceCriteria": [
+        "Проверить ограничение onkeydown на Aseprite 1.3-rc4-dev и современной версии.",
+        "Добавить безопасные клавиши Rotate/Move/Play только при отсутствии падений."
+      ],
+      "files": [
+        "pixrig/ui.lua",
+        "entry.lua"
+      ],
+      "labels": [
+        "UI",
+        "Research",
+        "Compatibility"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "pending",
+        "by": "",
+        "at": "",
+        "note": ""
+      },
+      "result": "Не реализовано; стабильность важнее горячих клавиш.",
+      "createdAt": "2026-11-27T07:15:21.603Z",
+      "updatedAt": "2026-11-27T07:15:21.603Z",
+      "history": []
+    },
+    {
+      "id": "PB-070",
+      "title": "Импорт 3D-анимации GLB/glTF/BVH и ретаргет Mixamo",
+      "type": "research",
+      "priority": "low",
+      "status": "proposed",
+      "description": "Долгосрочное направление: импорт движения из 3D и перенос на 2D скелет. Не входит в этап стабилизации Paint/Assembly.",
+      "acceptanceCriteria": [
+        "Определить входные форматы и карту соответствия 3D→2D костей.",
+        "Подготовить независимый тест ретаргета на Humanoid.",
+        "Не менять экспорт и формат старых проектов без миграции."
+      ],
+      "files": [
+        "pixrig/rig.lua",
+        "pixrig/templates.lua"
+      ],
+      "labels": [
+        "Roadmap",
+        "3D",
+        "Research"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "pending",
+        "by": "",
+        "at": "",
+        "note": ""
+      },
+      "result": "План на будущий этап, реализации пока нет.",
+      "createdAt": "2026-11-27T07:15:21.603Z",
+      "updatedAt": "2026-11-27T07:15:21.603Z",
+      "history": []
+    },
+    {
+      "id": "PB-071",
+      "title": "Smart Bones: управляемая углом деформация пикселей",
+      "type": "research",
+      "priority": "low",
+      "status": "proposed",
+      "description": "Отложенная идея по принципу Moho: крайние формы и интерполяция/коррекция пиксельной деформации при повороте кости.",
+      "acceptanceCriteria": [
+        "Сначала стабилизировать жёсткий Auto Bone Binding.",
+        "Исследовать примеры крайних поз без разрушения пиксель-арта."
+      ],
+      "files": [
+        "pixrig/binding.lua",
+        "pixrig/rig.lua"
+      ],
+      "labels": [
+        "Roadmap",
+        "Deformation",
+        "Research"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "pending",
+        "by": "",
+        "at": "",
+        "note": ""
+      },
+      "result": "Идея из паспорта проекта, не реализована.",
+      "createdAt": "2026-11-27T07:15:21.603Z",
+      "updatedAt": "2026-11-27T07:15:21.603Z",
+      "history": []
+    },
+    {
+      "id": "PB-072",
+      "title": "Onion Skin для скелетной анимации",
+      "type": "feature",
+      "priority": "low",
+      "status": "review",
+      "description": "Отображать соседние позы предыдущих/следующих кадров без генерации дополнительных слоёв.",
+      "acceptanceCriteria": [
+        "Настроить количество соседних кадров и прозрачность.",
+        "Отображение не меняет риг, рисунок или ключи."
+      ],
+      "files": [
+        "pixrig/ui.lua",
+        "pixrig/rig.lua"
+      ],
+      "labels": [
+        "Animation",
+        "Roadmap"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "approved",
+        "by": "human",
+        "at": "2026-11-27T09:16:13.998Z",
+        "note": ""
+      },
+      "result": "Реализовано в v0.8.2: вкладка Onion (вкл/выкл, назад 0–8, вперёд 0–8, кнопки −/+), призраки скелета красные/зелёные с затуханием, опция Ghost artwork. Только режим Animate, не при Play. Проверен только синтаксис (texluac); в Aseprite не запускалось.",
+      "createdAt": "2026-11-27T07:15:21.603Z",
+      "updatedAt": "2026-11-27T10:00:00.000Z",
+      "history": [
+        {
+          "id": "EV-N1U3IFXW",
+          "at": "2026-11-27T09:01:38.420Z",
+          "actor": "human",
+          "type": "task/edit",
+          "taskId": "PB-072",
+          "summary": "Сохранены поля карточки перед решением"
+        },
+        {
+          "id": "EV-B2PAPFXX",
+          "at": "2026-11-27T09:01:38.421Z",
+          "actor": "human",
+          "type": "task/decision",
+          "taskId": "PB-072",
+          "summary": "Решение: approved"
+        },
+        {
+          "id": "EV-TSHD4H8S",
+          "at": "2026-11-27T09:01:40.108Z",
+          "actor": "human",
+          "type": "task/edit",
+          "taskId": "PB-072",
+          "summary": "Изменена карточка: Onion Skin для скелетной анимации"
+        },
+        {
+          "id": "EV-VRJ4V7JH",
+          "at": "2026-11-27T09:16:13.997Z",
+          "actor": "human",
+          "type": "task/edit",
+          "taskId": "PB-072",
+          "summary": "Сохранены поля карточки перед решением"
+        },
+        {
+          "id": "EV-O80WI7JI",
+          "at": "2026-11-27T09:16:13.998Z",
+          "actor": "human",
+          "type": "task/decision",
+          "taskId": "PB-072",
+          "summary": "Решение: approved"
+        },
+        {
+          "id": "EV-082-PB-072-6",
+          "at": "2026-11-27T10:00:00.000Z",
+          "actor": "ai",
+          "type": "task/update",
+          "taskId": "PB-072",
+          "summary": "v0.8.2: Onion Skin по ТЗ пользователя (вкладка слева, длина назад/вперёд). Кэш поз сбрасывается при смене rig.rev/artRev. Ждёт проверки: призраки при смене кадра, Ghost artwork и скорость, отсутствие призраков в Rest/Assembly/Play."
+        }
+      ],
+      "statusEditedBy": "human"
+    },
+    {
+      "id": "PB-073",
+      "title": "Дополнительное IK: ключевое Influence, pole bone, ground",
+      "type": "feature",
+      "priority": "low",
+      "status": "proposed",
+      "description": "Расширения IK, отмеченные в старом паспорте проекта: изменяемое по кадрам влияние FK/IK, полюс направления сгиба, линия земли.",
+      "acceptanceCriteria": [
+        "Подготовить совместимое представление влияния по кадрам.",
+        "Проверить pose/export для 1/2/3+ звеньев.",
+        "Не менять базовые FK-ключи существующих проектов."
+      ],
+      "files": [
+        "pixrig/rig.lua",
+        "pixrig/ui.lua"
+      ],
+      "labels": [
+        "IK",
+        "Roadmap"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "pending",
+        "by": "",
+        "at": "",
+        "note": ""
+      },
+      "result": "Не реализовано; сначала проверить базовый IK в v0.8.0.",
+      "createdAt": "2026-11-27T07:15:21.603Z",
+      "updatedAt": "2026-11-27T10:00:00.000Z",
+      "history": [
+        {
+          "id": "EV-082-PB-073-7",
+          "at": "2026-11-27T10:00:00.000Z",
+          "actor": "ai",
+          "type": "task/update",
+          "taskId": "PB-073",
+          "summary": "Flip bend уже есть в панели Bone (виден на скриншоте пользователя), поэтому простой «переворот сустава» делать не нужно. Остаётся: pole bone, ключевое Influence, ground. Предложение: брать после проверки Onion Skin."
+        }
+      ]
+    },
+    {
+      "id": "PB-074",
+      "title": "Ручная проверка старых .aseprite-проектов в v0.8.0",
+      "type": "task",
+      "priority": "high",
+      "status": "done",
+      "description": "Проверить настоящие пользовательские файлы из v0.3.1, v0.4.x, v0.6.0 и v0.7.0. Не перезаписывать оригиналы; использовать копии.",
+      "acceptanceCriteria": [
+        "Открыть копии файлов разных версий без ошибок миграции.",
+        "Сверить кости, группы, Paint Sheets, FK/IK-ключи и экспорт.",
+        "Сохранить/переоткрыть новую assembly и проверить восстановление данных."
+      ],
+      "files": [
+        "pixrig/store.lua",
+        "pixrig/rig.lua",
+        "pixrig/ui.lua",
+        "pixrig/ui_classic.lua"
+      ],
+      "labels": [
+        "Compatibility",
+        "QA",
+        "Priority"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "approved",
+        "by": "human",
+        "at": "2026-11-27T09:40:04.600Z",
+        "note": "все работает"
+      },
+      "result": "Пользователь подтвердил: старые проекты открываются, всё работает.",
+      "createdAt": "2026-11-27T07:15:21.603Z",
+      "updatedAt": "2026-11-27T10:00:00.000Z",
+      "history": [
+        {
+          "id": "EV-NE7DK22E",
+          "at": "2026-11-27T09:02:07.094Z",
+          "actor": "human",
+          "type": "task/edit",
+          "taskId": "PB-074",
+          "summary": "Сохранены поля карточки перед решением"
+        },
+        {
+          "id": "EV-ZCRKM22F",
+          "at": "2026-11-27T09:02:07.095Z",
+          "actor": "human",
+          "type": "task/decision",
+          "taskId": "PB-074",
+          "summary": "Решение: approved"
+        },
+        {
+          "id": "EV-V28Q6VEG",
+          "at": "2026-11-27T09:40:04.600Z",
+          "actor": "human",
+          "type": "task/edit",
+          "taskId": "PB-074",
+          "summary": "Сохранены поля карточки перед решением"
+        },
+        {
+          "id": "EV-2W6OOVEG",
+          "at": "2026-11-27T09:40:04.600Z",
+          "actor": "human",
+          "type": "task/decision",
+          "taskId": "PB-074",
+          "summary": "Решение: approved — все работает"
+        },
+        {
+          "id": "EV-9WXM3WYP",
+          "at": "2026-11-27T09:40:06.625Z",
+          "actor": "human",
+          "type": "task/edit",
+          "taskId": "PB-074",
+          "summary": "Изменена карточка: Ручная проверка старых .aseprite-проектов в v0.8.0"
+        },
+        {
+          "id": "EV-082-PB-074-5",
+          "at": "2026-11-27T10:00:00.000Z",
+          "actor": "ai",
+          "type": "task/update",
+          "taskId": "PB-074",
+          "summary": "Закрыто по решению пользователя (approved: «все работает»)."
+        }
+      ],
+      "statusEditedBy": "human"
+    },
+    {
+      "id": "PB-075",
+      "title": "Удалить временный файл из исходного ZIP v0.8.0",
+      "type": "task",
+      "priority": "low",
+      "status": "done",
+      "description": "В полном архиве исходников присутствует pixrig/paint.lua.tmp. Этот временный файл не нужен для разработки или установки расширения и должен быть исключён из будущих source ZIP.",
+      "acceptanceCriteria": [
+        "Удалить *.tmp из исходного ZIP/сборочного списка.",
+        "Проверить, что основной pixrig/paint.lua и пакет .aseprite-extension не изменились."
+      ],
+      "files": [
+        "pixrig/paint.lua.tmp",
+        "build.py"
+      ],
+      "labels": [
+        "Packaging",
+        "Cleanup"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "pending",
+        "by": "",
+        "at": "",
+        "note": ""
+      },
+      "result": "В v0.8.1 удалён pixrig/paint.lua.tmp из исходников; исходный pixrig/paint.lua не изменён. В расширении по-прежнему два файла: package.json и main.lua.",
+      "createdAt": "2026-11-27T07:15:21.603Z",
+      "updatedAt": "2026-11-27T07:35:37.044Z",
+      "history": [
+        {
+          "id": "EV-081-PB-075-1",
+          "at": "2026-11-27T07:35:37.044Z",
+          "actor": "ai",
+          "type": "task/update",
+          "taskId": "PB-075",
+          "summary": "Временный файл удалён из исходного ZIP v0.8.1."
+        }
+      ]
+    },
+    {
+      "id": "PB-076",
+      "title": "Автоматические тесты v0.8.0: Lua, Assembly, Artwork, UI, размеры",
+      "type": "task",
+      "priority": "medium",
+      "status": "done",
+      "description": "Проверен текущий исходный пакет: синтаксис Lua, логика rig/assembly/layer binding, тесты нового/Classic UI и размеры окна 1366x768/1920x1080 при scale 1/2.",
+      "acceptanceCriteria": [
+        "texluac -p для модулей и собранного main.lua проходит.",
+        "test_rig, test_templates, test_assembly, test_art_layers проходят.",
+        "harness_workspace, harness_classic, harness_bundle, harness_sizes проходят."
+      ],
+      "files": [
+        "tests/test_rig.lua",
+        "tests/test_templates.lua",
+        "tests/test_assembly.lua",
+        "tests/test_art_layers.lua",
+        "tests/harness_workspace.lua",
+        "tests/harness_classic.lua",
+        "tests/harness_bundle.lua",
+        "tests/harness_sizes.lua"
+      ],
+      "labels": [
+        "QA",
+        "Tests",
+        "v0.8.0"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "pending",
+        "by": "",
+        "at": "",
+        "note": ""
+      },
+      "result": "Повторный прогон 27.11.2026: все перечисленные автоматические тесты прошли. Это не запуск в Aseprite.",
+      "createdAt": "2026-11-27T07:15:21.603Z",
+      "updatedAt": "2026-11-27T07:15:21.603Z",
+      "history": []
+    },
+    {
+      "id": "PB-077",
+      "title": "Сохранять пользовательские рисунки при повторном экспорте",
+      "type": "task",
+      "priority": "medium",
+      "status": "done",
+      "description": "Экспорт в группу PixRig отделён от исходных Paint Sheets; работа с оригинальными пользовательскими слоями и cel должна оставаться недеструктивной.",
+      "acceptanceCriteria": [
+        "Экспорт пересоздаёт только генерируемую группу PixRig.",
+        "Paint Sheets и пользовательские рисунки не удаляются при генерации результата.",
+        "Проверить повторный экспорт в v0.8.0 отдельно по PB-044."
+      ],
+      "files": [
+        "pixrig/export.lua",
+        "pixrig/paint.lua"
+      ],
+      "labels": [
+        "Export",
+        "DataSafety"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "pending",
+        "by": "",
+        "at": "",
+        "note": ""
+      },
+      "result": "Архитектурная защита исходников сохранена; экспорт по слоям подтверждался пользователем в v0.3.1. Новый сценарий v0.8 — в PB-044.",
+      "createdAt": "2026-11-27T07:15:21.603Z",
+      "updatedAt": "2026-11-27T07:15:21.603Z",
+      "history": []
+    },
+    {
+      "id": "PB-078",
+      "title": "Переключатели Artwork / Capsules / Bones в рабочем окне",
+      "type": "feature",
+      "priority": "medium",
+      "status": "done",
+      "description": "В двухпанельном интерфейсе v0.7.0 предусмотрено независимое отображение рисунка, капсул и костей; по умолчанию при наличии Artwork приоритет отдаётся нарисованному персонажу.",
+      "acceptanceCriteria": [
+        "Можно отдельно скрыть Artwork, Capsules и Bones.",
+        "Изменение видимости не удаляет исходные пиксели и не меняет позы."
+      ],
+      "files": [
+        "pixrig/ui.lua"
+      ],
+      "labels": [
+        "UI",
+        "Paint",
+        "v0.7.0"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "pending",
+        "by": "",
+        "at": "",
+        "note": ""
+      },
+      "result": "Часть пользовательски подтверждённого рабочего интерфейса v0.7.0; масштабированный UI в v0.8 требует дополнительной проверки.",
+      "createdAt": "2026-11-27T07:15:21.603Z",
+      "updatedAt": "2026-11-27T07:15:21.603Z",
+      "history": []
+    },
+    {
+      "title": "Удалить старый UI. все работает уже отлично",
+      "status": "done",
+      "type": "task",
+      "priority": "medium",
+      "description": "По запросу пользователя удалить старый Classic UI и оставить одно двухпанельное рабочее пространство. В v0.8.1 удалены команда PixelBoneClassic, модуль ui_classic.lua и соответствующий тест; предыдущий исходный архив остаётся отдельно доступен.",
+      "acceptanceCriteria": [
+        "Команда PixelBoneClassic не регистрируется и не отображается в новом расширении.",
+        "В установочный пакет не включается ui_classic.lua.",
+        "Новый PixelBoneOpen продолжает открываться, в том числе на сохранённых проектах."
+      ],
+      "files": [
+        "entry.lua",
+        "build.py",
+        "package.json",
+        "pixrig/ui_classic.lua",
+        "tests/harness_bundle.lua"
+      ],
+      "labels": [
+        "UI",
+        "Cleanup",
+        "v0.8.1"
+      ],
+      "result": "Выполнено в исходниках и пакете v0.8.1; автоматический тест проверил отсутствие команды Classic. На реальном Aseprite после переустановки ещё нужно проверить список команд.",
+      "id": "USR-TTMQNOGB",
+      "createdBy": "human",
+      "createdAt": "2026-11-27T07:25:24.107Z",
+      "updatedAt": "2026-11-27T07:35:37.044Z",
+      "decision": {
+        "state": "pending",
+        "by": "",
+        "at": "",
+        "note": ""
+      },
+      "history": [
+        {
+          "id": "EV-I75YMOGB",
+          "at": "2026-11-27T07:25:24.107Z",
+          "actor": "human",
+          "type": "task/create",
+          "taskId": "USR-TTMQNOGB",
+          "summary": "Добавлена задача вручную"
+        },
+        {
+          "id": "EV-081-USR-TTMQNOGB-2",
+          "at": "2026-11-27T07:35:37.044Z",
+          "actor": "ai",
+          "type": "task/update",
+          "taskId": "USR-TTMQNOGB",
+          "summary": "v0.8.1: Classic UI удалён, регистрация единственной команды проверена автоматически; ручная проверка меню ожидается."
+        }
+      ]
+    },
+    {
+      "title": "Move + IK: ошибка nil T (main.lua:3944)",
+      "status": "done",
+      "type": "bug",
+      "priority": "high",
+      "description": "Когда нажимаю муве и выбранна кость с ИК выдает ошибку несколько раз.\nC:\\Users\\Yuriy.m\\OneDrive\\Downloads\\Aseprite.v1.3.rc4\\extensions\\pixelbone\\main.lua:3944: attempt to index a nil value (local 'T')",
+      "acceptanceCriteria": [
+        "Создать IK на соединённой цепочке и перетащить её родительскую/дочернюю кость инструментом Move без ошибки nil T.",
+        "Повторить Move в Assemble и Animate и убедиться, что другие ключи не исчезли.",
+        "Проверить на Aseprite 1.3-rc4-dev с копией проекта."
+      ],
+      "files": [
+        "pixrig/ui.lua",
+        "tests/harness_workspace.lua"
+      ],
+      "labels": [
+        "IK",
+        "UI",
+        "Crash",
+        "Regression",
+        "v0.8.1"
+      ],
+      "result": "Подтверждено пользователем в Aseprite v0.8.1: ошибка nil T больше не воспроизводится.",
+      "id": "USR-8YRP1LQD",
+      "createdBy": "human",
+      "createdAt": "2026-11-27T07:26:53.893Z",
+      "updatedAt": "2026-11-27T10:00:00.000Z",
+      "decision": {
+        "state": "pending",
+        "by": "",
+        "at": "",
+        "note": ""
+      },
+      "history": [
+        {
+          "id": "EV-GCAC9LQE",
+          "at": "2026-11-27T07:26:53.894Z",
+          "actor": "human",
+          "type": "task/create",
+          "taskId": "USR-8YRP1LQD",
+          "summary": "Добавлена задача вручную"
+        },
+        {
+          "id": "EV-081-USR-8YRP1LQD-2",
+          "at": "2026-11-27T07:35:37.044Z",
+          "actor": "ai",
+          "type": "task/update",
+          "taskId": "USR-8YRP1LQD",
+          "summary": "v0.8.1: устранена причина nil T при Move; регрессионный тест проходит, ждёт подтверждения в Aseprite."
+        },
+        {
+          "id": "EV-082-USR-8YRP1LQD-2",
+          "at": "2026-11-27T10:00:00.000Z",
+          "actor": "ai",
+          "type": "task/update",
+          "taskId": "USR-8YRP1LQD",
+          "summary": "Закрыто: пользователь подтвердил в PB-064, что ошибки пропали. Фикс — явное сохранение второго результата Rig:pose/assembledPose (T)."
+        }
+      ]
+    },
+    {
+      "title": "Вернуть видимое управление IK chain (1–8 костей)",
+      "status": "done",
+      "type": "bug",
+      "priority": "medium",
+      "description": "Исчезла функция по влиянию ИК на кости как с блендера. длина влиянияе 1 2 кости и так далее. возможно просто не могу найти",
+      "acceptanceCriteria": [
+        "В начале вкладки Bone есть поле с текущей длиной IK chain и кнопки Chain - / Chain +.",
+        "При наличии IK меняется chain выбранного контроллера; без IK выбирается длина следующего создаваемого контроллера.",
+        "Процент IK influence редактируется отдельно и не смешивается с длиной цепочки.",
+        "Проверить доступность управления на 1366×768 при 200% UI scale."
+      ],
+      "files": [
+        "pixrig/ui.lua",
+        "tests/harness_workspace.lua",
+        "tests/harness_sizes.lua"
+      ],
+      "labels": [
+        "IK",
+        "UI",
+        "UX",
+        "v0.8.1"
+      ],
+      "result": "Пользователь нашёл поле длины цепочки (IK chain 1..8, Edit IK chain, отдельное IK influence %). Управление работает.",
+      "id": "USR-X3CTMY0V",
+      "createdBy": "human",
+      "createdAt": "2026-11-27T07:28:43.135Z",
+      "updatedAt": "2026-11-27T10:00:00.000Z",
+      "decision": {
+        "state": "approved",
+        "by": "human",
+        "at": "2026-11-27T10:00:00.000Z",
+        "note": "Длину нашёл (скриншот), можно отметить выполненным."
+      },
+      "history": [
+        {
+          "id": "EV-QAHZOY0V",
+          "at": "2026-11-27T07:28:43.135Z",
+          "actor": "human",
+          "type": "task/create",
+          "taskId": "USR-X3CTMY0V",
+          "summary": "Добавлена задача вручную"
+        },
+        {
+          "id": "EV-081-USR-X3CTMY0V-2",
+          "at": "2026-11-27T07:35:37.044Z",
+          "actor": "ai",
+          "type": "task/update",
+          "taskId": "USR-X3CTMY0V",
+          "summary": "v0.8.1: длина IK chain доступна без прокрутки; подтверждено тестами UI и размеров."
+        },
+        {
+          "id": "EV-082-USR-X3CTMY0V-4",
+          "at": "2026-11-27T10:00:00.000Z",
+          "actor": "ai",
+          "type": "task/update",
+          "taskId": "USR-X3CTMY0V",
+          "summary": "Закрыто по слову пользователя. Замечание ИИ: Chain -/+ вверху Bone и поле Edit IK chain внизу блока IK были неочевидны — при следующей правке UI стоит добавить подсказку."
+        }
+      ]
+    },
+    {
+      "title": "Rotate + IK: ошибка nil T (main.lua:4297)",
+      "status": "done",
+      "type": "bug",
+      "priority": "high",
+      "description": "Console\n\nC:\\Users\\Yuriy.m\\OneDrive\\Downloads\\Aseprite.v1.3.rc4\\extensions\\pixelbone\\main.lua:4297: attempt to index a nil value (local 'T')\nC:\\Users\\Yuriy.m\\OneDrive\\Downloads\\Aseprite.v1.3.rc4\\extensions\\pixelbone\\main.lua:4297: attempt to index a nil value (local 'T')\nC:\\Users\\Yuriy.m\\OneDrive\\Downloads\\Aseprite.v1.3.rc4\\extensions\\pixelbone\\main.lua:4297: attempt to index a nil value (local 'T')\nC:\\Users\\Yuriy.m\\OneDrive\\Downloads\\Aseprite.v1.3.rc4\\extensions\\pixelbone\\main.lua:4297: attempt to index a nil value (local 'T')\nC:\\Users\\Yuriy.m\\OneDrive\\Downloads\\Aseprite.v1.3.rc4\\extensions\\pixelbone\\main.lua:4297: attempt to index a nil value (local 'T')\nC:\\Users\\Yuriy.m\\OneDrive\\Downloads\\Aseprite.v1.3.rc4\\extensions\\pixelbone\\main.lua:4297: attempt to index a nil value (local 'T')\nC:\\Users\\Yuriy.m\\OneDrive\\Downloads\\Aseprite.v1.3.rc4\\extensions\\pixelbone\\main.lua:4297: attempt to index a nil value (local 'T')\nC:\\Users\\Yuriy.m\\OneDrive\\Downloads\\Aseprite.v1.3.rc4\\extensions\\pixelbone\\main.lua:4297: attempt to index a nil value (local 'T')\nC:\\Users\\Yuriy.m\\OneDrive\\Downloads\\Aseprite.v1.3.rc4\\extensions\\pixelbone\\main.lua:4297: attempt to index a nil value (local 'T')\nC:\\Users\\Yuriy.m\\OneDrive\\Downloads\\Aseprite.v1.3.rc4\\extensions pixelbone\\main.lua:4297: attempt to index a nil value (local 'T')\nC:\\Users\\Yuriy.m\\OneDrive\\Downloads\\Aseprite.v1.3.rc4\\extensions\\pixelbone\\main.lua:4297: attempt to index a nil value (local 'T')\nC:\\Users\\Yuriy.m\\OneDrive\\Downloads\\Aseprite.v1.3.rc4\\extensions\\pixelbone\\main.lua:4297: attempt to index a nil value (local 'T')\nC:\\Users\\Yuriy.m\\OneDrive\\Downloads\\Aseprite.v1.3.rc4\\extensions\\pixelbone\\main.lua:4297: attempt to index a nil value (local 'T')\nC:\\Users\\Yuriy.m\\OneDrive\\Downloads\\Aseprite.v1.3.rc4\\extensions\\pixelbone\\main.lua:4297: attempt to index a nil value (local 'T')\nC:\\Users\\Yuriy.m\\OneDrive\\Downloads\\Aseprite.v1.3.rc4\\extensions \\pixelbone\\main.lua:4297: attempt to index a nil value (local 'T')\nC:\\Users\\Yuriy.m\\OneDrive\\Downloads\\Aseprite.v1.3.rc4\\extensions\\pixelbone\\main.lua:4297: attempt to index a nil value (local 'T')\nC:\\Users\\Yuriy.m\\OneDrive\\Downloads\\Aseprite.v1.3.rc4\\extensions\\pixelbone\\main.lua:4297: attempt to index a nil value (local 'T')",
+      "acceptanceCriteria": [
+        "В Animate повернуть кость, принадлежащую включённой IK-цепочке, без ошибки nil T.",
+        "В Assemble повернуть ту же кость и сохранить ключи анимации неизменными.",
+        "При IK influence 100% помнить, что IK может перекрывать видимое FK-вращение.",
+        "Проверить на реальной Aseprite 1.3-rc4-dev."
+      ],
+      "files": [
+        "pixrig/ui.lua",
+        "tests/harness_workspace.lua"
+      ],
+      "labels": [
+        "IK",
+        "Animation",
+        "Crash",
+        "Regression",
+        "v0.8.1"
+      ],
+      "result": "Подтверждено пользователем в Aseprite v0.8.1: ошибка nil T больше не воспроизводится.",
+      "id": "USR-SR6WL6AH",
+      "createdBy": "human",
+      "createdAt": "2026-11-27T07:30:27.161Z",
+      "updatedAt": "2026-11-27T10:00:00.000Z",
+      "decision": {
+        "state": "pending",
+        "by": "",
+        "at": "",
+        "note": ""
+      },
+      "history": [
+        {
+          "id": "EV-TOCII6AH",
+          "at": "2026-11-27T07:30:27.161Z",
+          "actor": "human",
+          "type": "task/create",
+          "taskId": "USR-SR6WL6AH",
+          "summary": "Добавлена задача вручную"
+        },
+        {
+          "id": "EV-081-USR-SR6WL6AH-2",
+          "at": "2026-11-27T07:35:37.044Z",
+          "actor": "ai",
+          "type": "task/update",
+          "taskId": "USR-SR6WL6AH",
+          "summary": "v0.8.1: устранена причина nil T при Rotate; регрессионный тест проходит, ручная проверка ожидается."
+        },
+        {
+          "id": "EV-082-USR-SR6WL6AH-3",
+          "at": "2026-11-27T10:00:00.000Z",
+          "actor": "ai",
+          "type": "task/update",
+          "taskId": "USR-SR6WL6AH",
+          "summary": "Закрыто: пользователь подтвердил в PB-064, что ошибки пропали. Фикс — явное сохранение второго результата Rig:pose/assembledPose (T)."
+        }
+      ]
+    },
+    {
+      "id": "PB-079",
+      "title": "Регрессия v0.8.1: Move/Rotate под IK и видимый IK chain",
+      "type": "task",
+      "priority": "high",
+      "status": "done",
+      "description": "Минимальный hotfix без изменений движка: правильное получение двух результатов Rig:pose/assembledPose; верхний Chain +/-; удаление Classic-команды. Прогон проверок перед сборкой.",
+      "acceptanceCriteria": [
+        "Синтаксический тест всех Lua-исходников и собранного main.lua проходит.",
+        "Move/Rotate на IK-кости реально меняют каналы без исключения в UI mock.",
+        "Assembly Move/Rotate не записывают дополнительные ключи.",
+        "Изменение chain 2→3→2 работает; быстрое управление видно при 1366×768 и масштабе 200%.",
+        "Сохранён неизменный набор движковых модулей v0.8.0; пакет содержит только main.lua и package.json."
+      ],
+      "files": [
+        "pixrig/ui.lua",
+        "entry.lua",
+        "build.py",
+        "package.json",
+        "tests/harness_workspace.lua",
+        "tests/harness_bundle.lua",
+        "tests/harness_sizes.lua"
+      ],
+      "labels": [
+        "QA",
+        "Regression",
+        "IK",
+        "v0.8.1"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "pending",
+        "by": "",
+        "at": "",
+        "note": ""
+      },
+      "result": "Пройдено в Lua и mock Aseprite API; запуск в Aseprite не заявляется. Отчёт: RELEASE_0.8.1.md.",
+      "createdAt": "2026-11-27T07:35:37.044Z",
+      "updatedAt": "2026-11-27T07:35:37.044Z",
+      "history": [
+        {
+          "id": "EV-081-PB-079-1",
+          "at": "2026-11-27T07:35:37.044Z",
+          "actor": "ai",
+          "type": "task/update",
+          "taskId": "PB-079",
+          "summary": "Создан и завершён автоматический тестовый пакет v0.8.1; реальный запуск учитывается отдельно в PB-064."
+        }
+      ]
+    },
+    {
+      "title": "Пропала(может просто не могу найти) кнопка перевернуть суста в ИК",
+      "status": "rejected",
+      "type": "bug",
+      "priority": "medium",
+      "description": "",
+      "acceptanceCriteria": [],
+      "files": [],
+      "labels": [],
+      "result": "Кнопка уже существует: Bone > IK controllers > Flip bend. Закрыто как «есть в программе».",
+      "id": "USR-JPFC9H5J",
+      "createdBy": "human",
+      "createdAt": "2026-11-27T09:24:13.015Z",
+      "updatedAt": "2026-11-27T10:00:00.000Z",
+      "decision": {
+        "state": "rejected",
+        "by": "human",
+        "at": "2026-11-27T09:25:23.192Z",
+        "note": ""
+      },
+      "history": [
+        {
+          "id": "EV-5YM5SH5J",
+          "at": "2026-11-27T09:24:13.015Z",
+          "actor": "human",
+          "type": "task/create",
+          "taskId": "USR-JPFC9H5J",
+          "summary": "Добавлена задача вручную"
+        },
+        {
+          "id": "EV-QTYRCZAW",
+          "at": "2026-11-27T09:25:23.192Z",
+          "actor": "human",
+          "type": "task/edit",
+          "taskId": "USR-JPFC9H5J",
+          "summary": "Сохранены поля карточки перед решением"
+        },
+        {
+          "id": "EV-QGFZPZAW",
+          "at": "2026-11-27T09:25:23.192Z",
+          "actor": "human",
+          "type": "task/decision",
+          "taskId": "USR-JPFC9H5J",
+          "summary": "Решение: rejected"
+        },
+        {
+          "id": "EV-082-USR-JPFC9H5J-8",
+          "at": "2026-11-27T10:00:00.000Z",
+          "actor": "ai",
+          "type": "task/update",
+          "taskId": "USR-JPFC9H5J",
+          "summary": "Комментарий ИИ: кнопка Flip bend есть в блоке IK controllers (скриншот пользователя). Отказ обоснован."
+        }
+      ],
+      "statusEditedBy": "human"
+    },
+    {
+      "id": "PB-080",
+      "title": "Автотест Onion Skin в mock-harness",
+      "type": "task",
+      "priority": "medium",
+      "status": "proposed",
+      "description": "У ассистента нет Lua-интерпретатора, поэтому v0.8.2 проверена только texluac -p. Добавить сценарий в tests/harness_workspace.lua: включить onion, поставить ключи на кадрах 1–3, нарисовать кадр 2 и проверить, что ghostFrame возвращает позы 1 и 3, а в Rest/Assembly/Play призраков нет.",
+      "acceptanceCriteria": [
+        "Тест запускается локально (lua tests/harness_workspace.lua) и проходит.",
+        "Покрыты границы: первый и последний кадр, back/fwd = 0, смена анимации, сброс кэша при правке рига."
+      ],
+      "files": [
+        "pixrig/ui.lua",
+        "tests/harness_workspace.lua"
+      ],
+      "labels": [
+        "Onion",
+        "QA",
+        "v0.8.2"
+      ],
+      "createdBy": "ai",
+      "decision": {
+        "state": "pending",
+        "by": "",
+        "at": "",
+        "note": ""
+      },
+      "result": "Предложено ИИ; не выполнено.",
+      "createdAt": "2026-11-27T10:00:00.000Z",
+      "updatedAt": "2026-11-27T10:00:00.000Z",
+      "history": [
+        {
+          "id": "EV-082-PB-080-15",
+          "at": "2026-11-27T10:00:00.000Z",
+          "actor": "ai",
+          "type": "task/create",
+          "taskId": "PB-080",
+          "summary": "Создано ИИ: покрытие Onion Skin автотестом."
+        }
+      ]
+    }
+  ],
+  "handoff": {
+    "summary": "27.11.2026: v0.8.1 подтверждена пользователем в Aseprite (Move/Rotate на IK без ошибок, длина IK найдена, старые проекты открываются). Выпущена v0.8.2: Onion Skin (PB-072) — вкладка Onion, призраки соседних кадров, опция Ghost artwork. v0.8.2 проверена только синтаксисом, в Aseprite не запускалась.",
+    "completed": [
+      "v0.3.1: капсулы и экспорт в слои, подтверждены пользователем.",
+      "v0.4.0: редактируемые Paint Sheets, подтверждены пользователем.",
+      "v0.7.0: двухпанельный Canvas+Timeline подтверждён пользователем; Link/Connect работает.",
+      "v0.8.0: сборочная поза, многослойные изображения, Bone Inspector и IK, пользователь запускал расширение и сообщил о сбоях IK Move/Rotate.",
+      "v0.8.1: устранены два места потери второго результата функции Lua (nil T); кнопки Chain +/- вынесены вверх Bone.",
+      "v0.8.1: удалены Classic UI и временный paint.lua.tmp; движковые модули и формат sprite.data.pixrig не изменены.",
+      "v0.8.1: регрессионные Lua/mocks тесты, в т.ч. реальные перетаскивания Rotate/Move на IK костях и компактный IK chain UI, пройдены.",
+      "v0.8.1: пользователь подтвердил в Aseprite исправление nil T, работу IK и открытие старых проектов (PB-064, PB-074, USR-8YRP1LQD, USR-SR6WL6AH, USR-X3CTMY0V).",
+      "v0.8.2: Onion Skin по ТЗ пользователя (PB-072), статус review."
+    ],
+    "next": [
+      "PB-072: установить v0.8.2 и проверить Onion Skin (призраки красные/зелёные, Back/Forward 0–8, Ghost artwork, скорость).",
+      "PB-059: сценарий Paint Sheet → Assemble → Animate → правка шляпы.",
+      "PB-043 / PB-062: события изменения Artwork и Undo/Redo в реальном Aseprite.",
+      "PB-044: экспорт анимации после 0.8.x.",
+      "PB-073: pole bone, ключевое Influence, ground (Flip bend уже есть).",
+      "PB-080: автотест Onion Skin при наличии Lua."
+    ],
+    "blockers": [
+      "v0.8.2 не запускалась в Aseprite, у ассистента нет Lua-интерпретатора — только texluac -p.",
+      "Проверка Live Artwork, Undo/Redo и экспорта требует реального Aseprite.",
+      "IK на Disconnected скелете (PB-063) и изменение Rest после покраски (PB-065) — известные ограничения.",
+      "При IK influence 100% обычное FK-вращение цепочки перекрывается IK."
+    ],
+    "notes": "После установки v0.8.1 проверить на копии проекта Aseprite 1.3-rc4-dev (Windows). Старый Classic UI удалён по пользовательской задаче USR-TTMQNOGB; прежние пакеты v0.8.0 существуют отдельно. Не переписывать работающий движок. Никакие рисунки/слои/проекты не удалять. Задачи из загруженной 27.11.2026 доски, включая четыре USR-*, все оригинальные ID и события сохранены. Статус review = код исправлен и проверен автоматически, но нужен реальный Aseprite; done = выполненная сборка/автотест либо ранее подтверждённая пользователем функция. Формат sprite.data.pixrig version=2, поле assembly необязательно. Инструкции и ограничения в RELEASE_0.8.1.md. Обновлено ассистентом 27.11.2026: закрыты задачи по подтверждению пользователя; решения человека не изменялись, кроме USR-X3CTMY0V (пользователь попросил отметить выполненным).",
+    "lastRun": "2026-11-27T10:00:00.000Z",
+    "ikDiagnosis": "Разобрано: IK-цепочка считается от кончика и молча обрывается на разъединённой кости или точке ветвления (таз/грудь), поэтому chain=3 на двухзвенной ноге не гнул бедро/тянул тело. addController теперь ставит контроллер в текущую позу (Animate) или Assembly, а не в rest, и не дёргает стопу. UI показывает 'requested/used' и причину обрыва; сообщение IK-инструмента подсказывает использовать Move для тела. Тесты: добавлены два кейса, все тесты проходят.",
+    "updatedAt": "2026-11-28T07:53:18Z"
+  },
+  "activity": [
+    {
+      "id": "EV-I75YMOGB",
+      "at": "2026-11-27T07:25:24.107Z",
+      "actor": "human",
+      "type": "task/create",
+      "taskId": "USR-TTMQNOGB",
+      "summary": "Добавлена задача вручную"
+    },
+    {
+      "id": "EV-GCAC9LQE",
+      "at": "2026-11-27T07:26:53.894Z",
+      "actor": "human",
+      "type": "task/create",
+      "taskId": "USR-8YRP1LQD",
+      "summary": "Добавлена задача вручную"
+    },
+    {
+      "id": "EV-QAHZOY0V",
+      "at": "2026-11-27T07:28:43.135Z",
+      "actor": "human",
+      "type": "task/create",
+      "taskId": "USR-X3CTMY0V",
+      "summary": "Добавлена задача вручную"
+    },
+    {
+      "id": "EV-TOCII6AH",
+      "at": "2026-11-27T07:30:27.161Z",
+      "actor": "human",
+      "type": "task/create",
+      "taskId": "USR-SR6WL6AH",
+      "summary": "Добавлена задача вручную"
+    },
+    {
+      "id": "EV-081-USR-TTMQNOGB-2",
+      "at": "2026-11-27T07:35:37.044Z",
+      "actor": "ai",
+      "type": "task/update",
+      "taskId": "USR-TTMQNOGB",
+      "summary": "v0.8.1: Classic UI удалён, регистрация единственной команды проверена автоматически; ручная проверка меню ожидается."
+    },
+    {
+      "id": "EV-081-USR-8YRP1LQD-2",
+      "at": "2026-11-27T07:35:37.044Z",
+      "actor": "ai",
+      "type": "task/update",
+      "taskId": "USR-8YRP1LQD",
+      "summary": "v0.8.1: устранена причина nil T при Move; регрессионный тест проходит, ждёт подтверждения в Aseprite."
+    },
+    {
+      "id": "EV-081-USR-X3CTMY0V-2",
+      "at": "2026-11-27T07:35:37.044Z",
+      "actor": "ai",
+      "type": "task/update",
+      "taskId": "USR-X3CTMY0V",
+      "summary": "v0.8.1: длина IK chain доступна без прокрутки; подтверждено тестами UI и размеров."
+    },
+    {
+      "id": "EV-081-USR-SR6WL6AH-2",
+      "at": "2026-11-27T07:35:37.044Z",
+      "actor": "ai",
+      "type": "task/update",
+      "taskId": "USR-SR6WL6AH",
+      "summary": "v0.8.1: устранена причина nil T при Rotate; регрессионный тест проходит, ручная проверка ожидается."
+    },
+    {
+      "id": "EV-081-PB-053-1",
+      "at": "2026-11-27T07:35:37.044Z",
+      "actor": "ai",
+      "type": "task/update",
+      "taskId": "PB-053",
+      "summary": "Classic UI исключён из нового релиза по явному запросу пользователя."
+    },
+    {
+      "id": "EV-081-PB-075-1",
+      "at": "2026-11-27T07:35:37.044Z",
+      "actor": "ai",
+      "type": "task/update",
+      "taskId": "PB-075",
+      "summary": "Временный файл удалён из исходного ZIP v0.8.1."
+    },
+    {
+      "id": "EV-081-PB-052-1",
+      "at": "2026-11-27T07:35:37.044Z",
+      "actor": "ai",
+      "type": "task/update",
+      "taskId": "PB-052",
+      "summary": "Усилено покрытие IK, добавлены visible chain и регрессии Move/Rotate."
+    },
+    {
+      "id": "EV-081-PB-055-1",
+      "at": "2026-11-27T07:35:37.044Z",
+      "actor": "ai",
+      "type": "task/update",
+      "taskId": "PB-055",
+      "summary": "v0.8.1: исправлены пути Move/Rotate с IK, работа с Assembly проверена через mock UI."
+    },
+    {
+      "id": "EV-081-PB-064-1",
+      "at": "2026-11-27T07:35:37.044Z",
+      "actor": "ai",
+      "type": "task/update",
+      "taskId": "PB-064",
+      "summary": "Регрессионный план обновлён с учётом подтверждённого запуска v0.8.0 и выпуска v0.8.1."
+    },
+    {
+      "id": "EV-081-PB-059-1",
+      "at": "2026-11-27T07:35:37.044Z",
+      "actor": "ai",
+      "type": "task/update",
+      "taskId": "PB-059",
+      "summary": "E2E сценарий перенесён на v0.8.1 после исправления Move/Rotate + IK."
+    },
+    {
+      "id": "EV-081-PB-079-1",
+      "at": "2026-11-27T07:35:37.044Z",
+      "actor": "ai",
+      "type": "task/update",
+      "taskId": "PB-079",
+      "summary": "Создан и завершён автоматический тестовый пакет v0.8.1; реальный запуск учитывается отдельно в PB-064."
+    },
+    {
+      "id": "EV-X5BIHDNW",
+      "at": "2026-11-27T09:00:48.812Z",
+      "actor": "human",
+      "type": "task/edit",
+      "taskId": "PB-059",
+      "summary": "Сохранены поля карточки перед решением"
+    },
+    {
+      "id": "EV-NPV7TDNX",
+      "at": "2026-11-27T09:00:48.813Z",
+      "actor": "human",
+      "type": "task/decision",
+      "taskId": "PB-059",
+      "summary": "Решение: approved"
+    },
+    {
+      "id": "EV-N1U3IFXW",
+      "at": "2026-11-27T09:01:38.420Z",
+      "actor": "human",
+      "type": "task/edit",
+      "taskId": "PB-072",
+      "summary": "Сохранены поля карточки перед решением"
+    },
+    {
+      "id": "EV-B2PAPFXX",
+      "at": "2026-11-27T09:01:38.421Z",
+      "actor": "human",
+      "type": "task/decision",
+      "taskId": "PB-072",
+      "summary": "Решение: approved"
+    },
+    {
+      "id": "EV-TSHD4H8S",
+      "at": "2026-11-27T09:01:40.108Z",
+      "actor": "human",
+      "type": "task/edit",
+      "taskId": "PB-072",
+      "summary": "Изменена карточка: Onion Skin для скелетной анимации"
+    },
+    {
+      "id": "EV-NE7DK22E",
+      "at": "2026-11-27T09:02:07.094Z",
+      "actor": "human",
+      "type": "task/edit",
+      "taskId": "PB-074",
+      "summary": "Сохранены поля карточки перед решением"
+    },
+    {
+      "id": "EV-ZCRKM22F",
+      "at": "2026-11-27T09:02:07.095Z",
+      "actor": "human",
+      "type": "task/decision",
+      "taskId": "PB-074",
+      "summary": "Решение: approved"
+    },
+    {
+      "id": "EV-SUDJGP6I",
+      "at": "2026-11-27T09:12:43.578Z",
+      "actor": "human",
+      "type": "task/edit",
+      "taskId": "PB-064",
+      "summary": "Сохранены поля карточки перед решением"
+    },
+    {
+      "id": "EV-P8TA0P6J",
+      "at": "2026-11-27T09:12:43.579Z",
+      "actor": "human",
+      "type": "task/decision",
+      "taskId": "PB-064",
+      "summary": "Решение: rejected — Ошибки пропали все работает отлично. пока отклоним длину Ик все еще не нашел где задается "
+    },
+    {
+      "id": "EV-28F15QH6",
+      "at": "2026-11-27T09:12:45.258Z",
+      "actor": "human",
+      "type": "task/edit",
+      "taskId": "PB-064",
+      "summary": "Изменена карточка: Ручная регрессия PixelBone v0.8.1 в Aseprite 1.3-rc4-dev"
+    },
+    {
+      "id": "EV-BJS8FGEB",
+      "at": "2026-11-27T09:13:18.851Z",
+      "actor": "human",
+      "type": "task/edit",
+      "taskId": "PB-064",
+      "summary": "Сохранены поля карточки перед решением"
+    },
+    {
+      "id": "EV-85F6BGEB",
+      "at": "2026-11-27T09:13:18.851Z",
+      "actor": "human",
+      "type": "task/decision",
+      "taskId": "PB-064",
+      "summary": "Решение: approved — Ошибки пропали все работает отлично. пока отклоним длину Ик все еще не нашел где задается "
+    },
+    {
+      "id": "EV-6QKMDHMY",
+      "at": "2026-11-27T09:13:20.458Z",
+      "actor": "human",
+      "type": "task/edit",
+      "taskId": "PB-064",
+      "summary": "Изменена карточка: Ручная регрессия PixelBone v0.8.1 в Aseprite 1.3-rc4-dev"
+    },
+    {
+      "id": "EV-VRJ4V7JH",
+      "at": "2026-11-27T09:16:13.997Z",
+      "actor": "human",
+      "type": "task/edit",
+      "taskId": "PB-072",
+      "summary": "Сохранены поля карточки перед решением"
+    },
+    {
+      "id": "EV-O80WI7JI",
+      "at": "2026-11-27T09:16:13.998Z",
+      "actor": "human",
+      "type": "task/decision",
+      "taskId": "PB-072",
+      "summary": "Решение: approved"
+    },
+    {
+      "id": "EV-5YM5SH5J",
+      "at": "2026-11-27T09:24:13.015Z",
+      "actor": "human",
+      "type": "task/create",
+      "taskId": "USR-JPFC9H5J",
+      "summary": "Добавлена задача вручную"
+    },
+    {
+      "id": "EV-QTYRCZAW",
+      "at": "2026-11-27T09:25:23.192Z",
+      "actor": "human",
+      "type": "task/edit",
+      "taskId": "USR-JPFC9H5J",
+      "summary": "Сохранены поля карточки перед решением"
+    },
+    {
+      "id": "EV-QGFZPZAW",
+      "at": "2026-11-27T09:25:23.192Z",
+      "actor": "human",
+      "type": "task/decision",
+      "taskId": "USR-JPFC9H5J",
+      "summary": "Решение: rejected"
+    },
+    {
+      "id": "EV-3HJ46NVD",
+      "at": "2026-11-27T09:32:08.280Z",
+      "actor": "human",
+      "type": "task/edit",
+      "taskId": "PB-062",
+      "summary": "Изменена карточка: Реальное sprite.events, Undo/Redo и синхронизация cel"
+    },
+    {
+      "id": "EV-V28Q6VEG",
+      "at": "2026-11-27T09:40:04.600Z",
+      "actor": "human",
+      "type": "task/edit",
+      "taskId": "PB-074",
+      "summary": "Сохранены поля карточки перед решением"
+    },
+    {
+      "id": "EV-2W6OOVEG",
+      "at": "2026-11-27T09:40:04.600Z",
+      "actor": "human",
+      "type": "task/decision",
+      "taskId": "PB-074",
+      "summary": "Решение: approved — все работает"
+    },
+    {
+      "id": "EV-9WXM3WYP",
+      "at": "2026-11-27T09:40:06.625Z",
+      "actor": "human",
+      "type": "task/edit",
+      "taskId": "PB-074",
+      "summary": "Изменена карточка: Ручная проверка старых .aseprite-проектов в v0.8.0"
+    },
+    {
+      "id": "EV-082-PB-064-1",
+      "at": "2026-11-27T10:00:00.000Z",
+      "actor": "ai",
+      "type": "task/update",
+      "taskId": "PB-064",
+      "summary": "Закрыто по подтверждению пользователя (v0.8.1 в реальном Aseprite). Оговорка про длину IK снята: найдено в панели Bone."
+    },
+    {
+      "id": "EV-082-USR-8YRP1LQD-2",
+      "at": "2026-11-27T10:00:00.000Z",
+      "actor": "ai",
+      "type": "task/update",
+      "taskId": "USR-8YRP1LQD",
+      "summary": "Закрыто: пользователь подтвердил в PB-064, что ошибки пропали. Фикс — явное сохранение второго результата Rig:pose/assembledPose (T)."
+    },
+    {
+      "id": "EV-082-USR-SR6WL6AH-3",
+      "at": "2026-11-27T10:00:00.000Z",
+      "actor": "ai",
+      "type": "task/update",
+      "taskId": "USR-SR6WL6AH",
+      "summary": "Закрыто: пользователь подтвердил в PB-064, что ошибки пропали. Фикс — явное сохранение второго результата Rig:pose/assembledPose (T)."
+    },
+    {
+      "id": "EV-082-USR-X3CTMY0V-4",
+      "at": "2026-11-27T10:00:00.000Z",
+      "actor": "ai",
+      "type": "task/update",
+      "taskId": "USR-X3CTMY0V",
+      "summary": "Закрыто по слову пользователя. Замечание ИИ: Chain -/+ вверху Bone и поле Edit IK chain внизу блока IK были неочевидны — при следующей правке UI стоит добавить подсказку."
+    },
+    {
+      "id": "EV-082-PB-074-5",
+      "at": "2026-11-27T10:00:00.000Z",
+      "actor": "ai",
+      "type": "task/update",
+      "taskId": "PB-074",
+      "summary": "Закрыто по решению пользователя (approved: «все работает»)."
+    },
+    {
+      "id": "EV-082-PB-072-6",
+      "at": "2026-11-27T10:00:00.000Z",
+      "actor": "ai",
+      "type": "task/update",
+      "taskId": "PB-072",
+      "summary": "v0.8.2: Onion Skin по ТЗ пользователя (вкладка слева, длина назад/вперёд). Кэш поз сбрасывается при смене rig.rev/artRev. Ждёт проверки: призраки при смене кадра, Ghost artwork и скорость, отсутствие призраков в Rest/Assembly/Play."
+    },
+    {
+      "id": "EV-082-PB-073-7",
+      "at": "2026-11-27T10:00:00.000Z",
+      "actor": "ai",
+      "type": "task/update",
+      "taskId": "PB-073",
+      "summary": "Flip bend уже есть в панели Bone (виден на скриншоте пользователя), поэтому простой «переворот сустава» делать не нужно. Остаётся: pole bone, ключевое Influence, ground. Предложение: брать после проверки Onion Skin."
+    },
+    {
+      "id": "EV-082-USR-JPFC9H5J-8",
+      "at": "2026-11-27T10:00:00.000Z",
+      "actor": "ai",
+      "type": "task/update",
+      "taskId": "USR-JPFC9H5J",
+      "summary": "Комментарий ИИ: кнопка Flip bend есть в блоке IK controllers (скриншот пользователя). Отказ обоснован."
+    },
+    {
+      "id": "EV-082-PB-059-9",
+      "at": "2026-11-27T10:00:00.000Z",
+      "actor": "ai",
+      "type": "task/update",
+      "taskId": "PB-059",
+      "summary": "Комментарий ИИ: остаётся главным ручным сценарием (Paint Sheet → Assemble → Animate → правка шляпы). Рекомендую делать на копии проекта; при ошибке пришлите скриншот и текст из app.alert."
+    },
+    {
+      "id": "EV-082-PB-062-10",
+      "at": "2026-11-27T10:00:00.000Z",
+      "actor": "ai",
+      "type": "task/update",
+      "taskId": "PB-062",
+      "summary": "Комментарий ИИ: sprite.events и Undo/Redo проверены только на mock. Реальное поведение rc4-dev неизвестно — самый рискованный пункт для Live Artwork (PB-043). Проверять вместе с PB-043."
+    },
+    {
+      "id": "EV-082-PB-063-11",
+      "at": "2026-11-27T10:00:00.000Z",
+      "actor": "ai",
+      "type": "task/update",
+      "taskId": "PB-063",
+      "summary": "Комментарий ИИ: архитектурное ограничение, без воспроизведённого бага. Берём, когда понадобится IK на разнесённых Disconnected-частях."
+    },
+    {
+      "id": "EV-082-PB-041-12",
+      "at": "2026-11-27T10:00:00.000Z",
+      "actor": "ai",
+      "type": "task/update",
+      "taskId": "PB-041",
+      "summary": "Комментарий ИИ: риск, а не подтверждённый баг. Сначала воспроизвести на копии: изменить размер Paint Sheet и переместить кости в Rest."
+    },
+    {
+      "id": "EV-082-PB-052-13",
+      "at": "2026-11-27T10:00:00.000Z",
+      "actor": "ai",
+      "type": "task/update",
+      "taskId": "PB-052",
+      "summary": "Комментарий ИИ: Move/Rotate под IK и Chain подтверждены пользователем в v0.8.1. Остаётся проверить сохранение, несколько кадров и экспорт с IK."
+    },
+    {
+      "id": "EV-082-PB-055-14",
+      "at": "2026-11-27T10:00:00.000Z",
+      "actor": "ai",
+      "type": "task/update",
+      "taskId": "PB-055",
+      "summary": "Комментарий ИИ: Rotate/Move на IK-костях работают в реальном Aseprite (подтверждено в PB-064)."
+    },
+    {
+      "id": "EV-082-PB-080-15",
+      "at": "2026-11-27T10:00:00.000Z",
+      "actor": "ai",
+      "type": "task/create",
+      "taskId": "PB-080",
+      "summary": "Создано ИИ: покрытие Onion Skin автотестом."
+    }
+  ],
+  "meta": {
+    "revision": 30,
+    "updatedAt": "2026-11-28T07:53:18Z",
+    "updatedBy": "ai"
+  }
+}
